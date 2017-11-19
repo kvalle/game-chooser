@@ -1,3 +1,4 @@
 .vagrant/
 backend/.venv/
 notes.txt
+*.pyc
