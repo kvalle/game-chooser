@@ -1,5 +1,6 @@
 import requests
 import xmltodict
+import time
 
 def get_user(name):
 	r = requests.get('https://www.boardgamegeek.com/xmlapi2/user?name=' + name)
