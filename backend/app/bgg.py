@@ -29,8 +29,18 @@ def get_games(user_name, max_retries=4):
 
 	return [{
 		"id": game["@objectid"],
-		"name": game["name"]["#text"], 
+		"name": game["name"]["#text"],
 		"year": game["yearpublished"],
 		"thumbnail_url": game["thumbnail"],
-		"image_url": game["image"]  
+		"image_url": game["image"]
 	} for game in data["items"]["item"]]
+
+
+def get_game(game_id):
+	r = requests.get('https://www.boardgamegeek.com/xmlapi2/thing?id=' + str(game_id))
+	data = data = xmltodict.parse(r.text)
+
+	return {
+		"id": data["items"]["item"]["@id"],
+		"name": data["items"]["item"]["name"][0]["@value"]
+	}
