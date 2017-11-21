@@ -1,14 +1,9 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, img)
-import Html.Attributes exposing (src)
-
-
----- MODEL ----
-
-
-type alias Model =
-    {}
+import Html
+import Model exposing (Model)
+import Messages exposing (Msg(..))
+import View
 
 
 init : ( Model, Cmd Msg )
@@ -16,36 +11,15 @@ init =
     ( {}, Cmd.none )
 
 
-
----- UPDATE ----
-
-
-type Msg
-    = NoOp
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     ( model, Cmd.none )
 
 
-
----- VIEW ----
-
-
-view : Model -> Html Msg
-view model =
-    div [] [ text "Your Elm App is working!" ]
-        
-
-
----- PROGRAM ----
-
-
 main : Program Never Model Msg
 main =
     Html.program
-        { view = view
+        { view = View.view
         , init = init
         , update = update
         , subscriptions = always Sub.none
