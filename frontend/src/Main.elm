@@ -107,7 +107,7 @@ update msg model =
                     )
 
                 Err error ->
-                    ( { model | pageState = Loaded (Error error) }
+                    ( { model | pageState = Loaded (Error "Unable to load user info") }
                     , Cmd.none
                     )
 

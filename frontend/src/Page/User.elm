@@ -2,9 +2,10 @@ module Page.User exposing (Model, Msg(..), view, init, update)
 
 import Html exposing (..)
 import Task exposing (Task)
-import Process
-import Time
 import Data.AppState exposing (AppState)
+import Backend.User
+import Data.User exposing (User)
+import Http
 
 
 type Msg
@@ -12,13 +13,12 @@ type Msg
 
 
 type alias Model =
-    { username : String }
+    User
 
 
-init : String -> Task String Model
+init : String -> Task Http.Error Model
 init name =
-    Process.sleep Time.second
-        |> Task.andThen (always <| Task.succeed { username = name })
+    Backend.User.getByName name
 
 
 view : Model -> Html Msg
