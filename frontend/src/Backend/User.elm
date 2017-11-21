@@ -4,17 +4,27 @@ import Data.User exposing (User)
 import Task exposing (Task)
 import Http exposing (Request)
 import Json.Decode
+import Data.Environment exposing (Environment(..))
 
 
-getByName : String -> Task Http.Error User
-getByName username =
-    request "GET" (baseUrl ++ "user/" ++ username) Http.emptyBody Data.User.decoder
-        |> Http.toTask
+getByName : Environment -> String -> Task Http.Error User
+getByName env username =
+    case buildUrl env [ "user", username ] of
+        Ok url ->
+            request "GET" url Http.emptyBody Data.User.decoder |> Http.toTask
+
+        Err err ->
+            Task.fail <| Http.BadUrl "err"
 
 
-baseUrl : String
-baseUrl =
-    "http://localhost:7777/"
+buildUrl : Environment -> List String -> Result String String
+buildUrl env fragments =
+    case env of
+        Localhost ->
+            Ok <| "http://localhost:7777/" ++ (String.join "/" fragments)
+
+        Unknown err ->
+            Err ""
 
 
 request : String -> String -> Http.Body -> Json.Decode.Decoder a -> Http.Request a

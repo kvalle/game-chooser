@@ -16,9 +16,9 @@ type alias Model =
     User
 
 
-init : String -> Task Http.Error Model
-init name =
-    Backend.User.getByName name
+init : AppState -> String -> Task Http.Error Model
+init appState name =
+    Backend.User.getByName appState.environment name
 
 
 view : Model -> Html Msg

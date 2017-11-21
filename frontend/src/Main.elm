@@ -11,6 +11,7 @@ import Html exposing (..)
 import Views
 import Page.User
 import Page.Home
+import Data.Environment
 
 
 type alias Model =
@@ -47,7 +48,10 @@ init location =
         ( model, cmd ) =
             updateWithRoute (Route.fromLocation location)
                 { pageState = Loaded Blank
-                , appState = { mdl = Material.model }
+                , appState =
+                    { mdl = Material.model
+                    , environment = Data.Environment.fromLocation location
+                    }
                 }
     in
         ( model, Cmd.batch [ cmd, Material.init Mdl ] )
@@ -131,7 +135,7 @@ updateWithRoute route model =
                 )
 
             Route.User name ->
-                transition UserPageLoaded (Page.User.init name)
+                transition UserPageLoaded (Page.User.init model.appState name)
 
             Route.Unknown ->
                 ( { model | pageState = Loaded (Error "404") }
