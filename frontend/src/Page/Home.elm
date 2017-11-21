@@ -9,7 +9,6 @@ module Page.Home
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput, onClick)
 import Data.AppState exposing (AppState)
 import Route exposing (Route(..))
 import Material.Textfield as Textfield
