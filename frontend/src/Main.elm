@@ -159,8 +159,7 @@ view model =
                 |> Views.frame model.appState
 
         Loaded (Home homeModel) ->
-            Page.Home.view homeModel
-                |> Html.map HomeMsg
+            Page.Home.view homeModel model.appState HomeMsg Mdl
                 |> Views.frame model.appState
 
         Loaded (User userModel) ->
