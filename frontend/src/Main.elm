@@ -112,6 +112,10 @@ update msg model =
                     )
 
 
+{-| Helper function for update. Given a Route and a Model, either load the right
+page directly, or set transition state and initialise loading of data for the
+new page.
+-}
 updateWithRoute : Route -> Model -> ( Model, Cmd Msg )
 updateWithRoute route model =
     let
@@ -119,10 +123,6 @@ updateWithRoute route model =
             ( { model | pageState = TransitioningFrom (getPage model.pageState) }
             , Task.attempt toMsg task
             )
-
-        pageErrored : String -> Model -> Model
-        pageErrored errorMessage model =
-            { model | pageState = Loaded (Error errorMessage) }
     in
         case route of
             Route.Home ->
@@ -142,31 +142,27 @@ updateWithRoute route model =
 view : Model -> Html Msg
 view model =
     case model.pageState of
-        Loaded page ->
-            viewPage model.appState page
-
         TransitioningFrom page ->
-            Views.loading |> Views.frame model.appState
+            Views.loading
+                |> Views.frame model.appState
 
+        Loaded Blank ->
+            Html.text ""
+                |> Views.frame model.appState
 
-viewPage : AppState -> Page -> Html Msg
-viewPage appState page =
-    case page of
-        Blank ->
-            Html.text "" |> Views.frame appState
+        Loaded (Error error) ->
+            Html.text error
+                |> Views.frame model.appState
 
-        Error error ->
-            Html.text error |> Views.frame appState
-
-        Home homeModel ->
+        Loaded (Home homeModel) ->
             Page.Home.view homeModel
                 |> Html.map HomeMsg
-                |> Views.frame appState
+                |> Views.frame model.appState
 
-        User userModel ->
+        Loaded (User userModel) ->
             Page.User.view userModel
                 |> Html.map UserMsg
-                |> Views.frame appState
+                |> Views.frame model.appState
 
 
 getPage : PageState -> Page
