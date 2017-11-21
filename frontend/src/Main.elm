@@ -10,6 +10,7 @@ import Task
 import Html exposing (..)
 import Views
 import Page.User
+import Page.Home
 
 
 type alias Model =
@@ -25,7 +26,7 @@ type PageState
 
 type Page
     = Blank
-    | Home
+    | Home Page.Home.Model
     | User Page.User.Model
     | Error String
 
@@ -68,19 +69,34 @@ update msg model =
         SetRoute route ->
             updateWithRoute route model
 
-        Messages.UserMsg userMsg ->
+        Messages.HomeMsg subMsg ->
             case getPage model.pageState of
-                User userModel ->
+                Home subModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.User.update userMsg model.appState userModel
+                            Page.Home.update subMsg model.appState subModel
+                    in
+                        ( { model | pageState = Loaded (Home newModel) }
+                        , Cmd.map HomeMsg newCmd
+                        )
+
+                _ ->
+                    -- Disregard messages when on other pages
+                    ( model, Cmd.none )
+
+        Messages.UserMsg subMsg ->
+            case getPage model.pageState of
+                User subModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.User.update subMsg model.appState subModel
                     in
                         ( { model | pageState = Loaded (User newModel) }
                         , Cmd.map UserMsg newCmd
                         )
 
                 _ ->
-                    -- Disregard user messages when on other pages
+                    -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
         Messages.UserPageLoaded result ->
@@ -110,7 +126,7 @@ updateWithRoute route model =
     in
         case route of
             Route.Home ->
-                ( { model | pageState = Loaded Home }
+                ( { model | pageState = Loaded (Home Page.Home.init) }
                 , Cmd.none
                 )
 
@@ -142,8 +158,10 @@ viewPage appState page =
         Error error ->
             Html.text error |> Views.frame appState
 
-        Home ->
-            Html.text "home page" |> Views.frame appState
+        Home homeModel ->
+            Page.Home.view homeModel
+                |> Html.map HomeMsg
+                |> Views.frame appState
 
         User userModel ->
             Page.User.view userModel

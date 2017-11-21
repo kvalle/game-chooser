@@ -40,7 +40,7 @@ routeToString page =
                     []
 
                 User username ->
-                    [ "beers", username ]
+                    [ "u", username ]
 
                 Unknown ->
                     []
