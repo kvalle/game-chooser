@@ -4,7 +4,7 @@ import Html exposing (..)
 import Task exposing (Task)
 import Process
 import Time
-import AppState exposing (AppState)
+import Data.AppState exposing (AppState)
 
 
 type Msg

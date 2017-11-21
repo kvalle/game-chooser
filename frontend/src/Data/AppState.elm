@@ -1,4 +1,4 @@
-module AppState exposing (AppState)
+module Data.AppState exposing (AppState)
 
 import Material
 

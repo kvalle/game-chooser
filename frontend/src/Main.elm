@@ -5,7 +5,7 @@ import Messages exposing (Msg(..))
 import Material
 import Navigation
 import Route exposing (Route(..))
-import AppState exposing (AppState)
+import Data.AppState exposing (AppState)
 import Task
 import Html exposing (..)
 import Views

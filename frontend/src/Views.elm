@@ -2,7 +2,7 @@ module Views exposing (frame, loading)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import AppState exposing (AppState)
+import Data.AppState exposing (AppState)
 
 
 frame : AppState -> Html msg -> Html msg
