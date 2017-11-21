@@ -17,12 +17,27 @@ module.exports = {
     },
 
     plugins: [
-
+        new CopyWebpackPlugin([
+            { from: 'static/style', to: '' },
+        ]),
     ],
 
     module: {
         noParse: /\.elm$/,
         rules: [
+            {
+                test: /\.css$/,
+                exclude: /(node_modules)/,
+                loader: ExtractTextPlugin.extract({
+                    // use style-loader in development
+                    fallback: 'style-loader?sourceMap=false',
+                    use: [
+                        {
+                            loader: 'css-loader', options: { sourceMap: false, }
+                        }
+                    ],
+                }),
+            },
             {
                 test: /\.(ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'file-loader',
@@ -36,7 +51,12 @@ module.exports = {
                 test: /\.svg$/,
                 loader: 'file-loader',
                 options: { name: '[name].[ext]' }
+            },
+            {
+                test: /\.css$/,
+                loader: 'file-loader',
+                options: { name: '[name].[ext]' }
             }
         ],
-    },
+    }
 }
