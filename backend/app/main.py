@@ -19,6 +19,7 @@ def ping():
 
 
 @application.route("/user/<username>", methods=['GET'])
+@cross_origin(headers=['Content-Type', 'Accept'])
 def get_user(username):
     user = bgg.get_user(username)
     data = json.dumps(user)
@@ -26,6 +27,7 @@ def get_user(username):
 
 
 @application.route("/user/<username>/games", methods=['GET'])
+@cross_origin(headers=['Content-Type', 'Accept'])
 def get_user_games(username):
     games = bgg.get_games(username)
     data = json.dumps(games)
