@@ -4,7 +4,6 @@ module Data.Game
         , GameId
         , encode
         , decoder
-        , toggleSelection
         , setSelection
         )
 
@@ -49,11 +48,6 @@ decoder =
         (Json.Decode.field "thumbnail_url" Json.Decode.string)
         (Json.Decode.field "image_url" Json.Decode.string)
         (Json.Decode.field "year" (Json.Decode.maybe Json.Decode.string))
-
-
-toggleSelection : Game -> Game
-toggleSelection game =
-    { game | selected = not game.selected }
 
 
 setSelection : Bool -> Game -> Game
