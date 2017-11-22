@@ -20,7 +20,7 @@ import Utils
 
 
 type Msg
-    = ToggleGame GameId
+    = SetSelection GameId Bool
 
 
 type alias Model =
@@ -72,7 +72,7 @@ gameCard userMsg mdlMsg mdlModel index game =
             [ Options.css "background" <| "url('" ++ game.thumbnail_url ++ "') center / cover"
             , Options.css "height" "256px"
             , Options.css "padding" "0"
-            , Options.onClick <| userMsg <| ToggleGame game.id
+            , Options.onClick <| userMsg <| SetSelection game.id (not game.selected)
             ]
             [ Card.head
                 [ Options.scrim 0.8
@@ -91,7 +91,7 @@ gameCard userMsg mdlMsg mdlModel index game =
             [ Toggles.checkbox mdlMsg
                 [ index ]
                 mdlModel
-                [ Options.onToggle <| userMsg <| ToggleGame game.id
+                [ Options.onToggle <| userMsg <| SetSelection game.id (not game.selected)
                 , Toggles.ripple
                 , Toggles.value game.selected
                 ]
@@ -103,7 +103,7 @@ gameCard userMsg mdlMsg mdlModel index game =
 update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
 update msg appState model =
     case msg of
-        ToggleGame id ->
-            ( { model | games = Utils.updateById id Data.Game.toggleSelection model.games }
+        SetSelection id selected ->
+            ( { model | games = Utils.updateById id (Data.Game.setSelection selected) model.games }
             , Cmd.none
             )

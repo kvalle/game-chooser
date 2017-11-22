@@ -1,4 +1,12 @@
-module Data.Game exposing (Game, GameId, encode, decoder, toggleSelection)
+module Data.Game
+    exposing
+        ( Game
+        , GameId
+        , encode
+        , decoder
+        , toggleSelection
+        , setSelection
+        )
 
 import Json.Encode
 import Json.Decode
@@ -46,3 +54,8 @@ decoder =
 toggleSelection : Game -> Game
 toggleSelection game =
     { game | selected = not game.selected }
+
+
+setSelection : Bool -> Game -> Game
+setSelection selected game =
+    { game | selected = selected }
