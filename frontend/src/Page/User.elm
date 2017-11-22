@@ -55,7 +55,10 @@ view model appState userMsg mdlMsg =
                     , ")"
                     ]
             ]
-        , h4 [] [ text <| toString (List.length model.games) ++ " games" ]
+        , h4 []
+            [ text <| toString (List.length model.games) ++ " games "
+            , text <| "(" ++ toString (model.games |> List.filter .selected |> List.length) ++ " selected)"
+            ]
         , div [ class "game-cards" ] <| List.indexedMap (gameCard userMsg mdlMsg appState.mdl) model.games
         ]
 
