@@ -13,10 +13,11 @@ import Material.Card as Card
 import Material.Options as Options
 import Material.Typography as Typography
 import Material.Color as Color
+import Utils
 
 
 type Msg
-    = NoOp
+    = ToggleGame GameId
 
 
 type alias Model =
@@ -60,9 +61,9 @@ gameCard : Game -> Html Msg
 gameCard game =
     Card.view
         [ Options.cs "game-card"
+        , Options.cs "game-card-deselected" |> Options.when (not game.selected)
         , Options.css "background" <| "url('" ++ game.thumbnail_url ++ "') center / cover"
-        , Options.css "width" "256px"
-        , Options.css "height" "256px"
+        , Options.onClick <| ToggleGame game.id
         ]
         [ Card.text [ Card.expand ] []
         , Card.text
@@ -77,5 +78,7 @@ gameCard game =
 update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
 update msg appState model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        ToggleGame id ->
+            ( { model | games = Utils.updateById id Data.Game.toggleSelection model.games }
+            , Cmd.none
+            )

@@ -1,11 +1,12 @@
-module Data.Game exposing (Game, GameId, encode, decoder)
+module Data.Game exposing (Game, GameId, encode, decoder, toggleSelection)
 
 import Json.Encode
 import Json.Decode
 
 
 type alias Game =
-    { id : GameId
+    { selected : Bool
+    , id : GameId
     , title : String
     , thumbnail_url : String
     , image_url : String
@@ -34,9 +35,14 @@ encode game =
 
 decoder : Json.Decode.Decoder Game
 decoder =
-    Json.Decode.map5 (Game)
+    Json.Decode.map5 (Game True)
         (Json.Decode.field "id" Json.Decode.string)
         (Json.Decode.field "title" Json.Decode.string)
         (Json.Decode.field "thumbnail_url" Json.Decode.string)
         (Json.Decode.field "image_url" Json.Decode.string)
         (Json.Decode.field "year" (Json.Decode.maybe Json.Decode.string))
+
+
+toggleSelection : Game -> Game
+toggleSelection game =
+    { game | selected = not game.selected }

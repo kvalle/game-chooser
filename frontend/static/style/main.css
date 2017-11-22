@@ -16,6 +16,12 @@ html, body {
 
 .game-card {
   margin: 7px;
+  width: 256px;
+  height: 256px;
+}
+
+.game-card-deselected {
+  filter: grayscale(1.0);
 }
 
 .home-wrapper {
