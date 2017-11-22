@@ -3,7 +3,20 @@ html, body {
     margin: 0;
 }
 
+.game-cards {
+  width: 100%;
 
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: space-between;
+  margin-left: 7px;
+  margin-right: 7px;
+}
+
+.game-card {
+  margin: 7px;
+}
 
 .home-wrapper {
   position: fixed;

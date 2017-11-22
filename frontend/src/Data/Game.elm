@@ -1,16 +1,20 @@
-module Data.Game exposing (Game, encode, decoder)
+module Data.Game exposing (Game, GameId, encode, decoder)
 
 import Json.Encode
 import Json.Decode
 
 
 type alias Game =
-    { id : String
+    { id : GameId
     , name : String
     , thumbnail_url : String
     , image_url : String
     , year : Maybe String
     }
+
+
+type alias GameId =
+    String
 
 
 encode : Game -> Json.Encode.Value

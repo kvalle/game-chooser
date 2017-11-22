@@ -1,15 +1,19 @@
-module Data.User exposing (User, encode, decoder)
+module Data.User exposing (User, UserId, encode, decoder)
 
 import Json.Encode
 import Json.Decode
 
 
 type alias User =
-    { id : String
+    { id : UserId
     , username : String
     , firstname : String
     , lastname : String
     }
+
+
+type alias UserId =
+    String
 
 
 encode : User -> Json.Encode.Value
