@@ -163,8 +163,7 @@ view model =
                 |> Views.frame model.appState
 
         Loaded (User userModel) ->
-            Page.User.view userModel
-                |> Html.map UserMsg
+            Page.User.view userModel model.appState UserMsg Mdl
                 |> Views.frame model.appState
 
 

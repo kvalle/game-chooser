@@ -14,6 +14,8 @@ import Material.Options as Options
 import Material.Typography as Typography
 import Material.Color as Color
 import Material.Elevation as Elevation
+import Material.Toggles as Toggles
+import Material
 import Utils
 
 
@@ -39,8 +41,8 @@ init appState name =
         Task.map2 Model getUser getGames
 
 
-view : Model -> Html Msg
-view model =
+view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
+view model appState userMsg mdlMsg =
     div [ class "user-wrapper" ]
         [ h2 []
             [ text <|
@@ -54,12 +56,12 @@ view model =
                     ]
             ]
         , h4 [] [ text <| toString (List.length model.games) ++ " games" ]
-        , div [ class "game-cards" ] <| List.map gameCard model.games
+        , div [ class "game-cards" ] <| List.indexedMap (gameCard userMsg mdlMsg appState.mdl) model.games
         ]
 
 
-gameCard : Game -> Html Msg
-gameCard game =
+gameCard : (Msg -> msg) -> (Material.Msg msg -> msg) -> Material.Model -> Int -> Game -> Html msg
+gameCard userMsg mdlMsg mdlModel index game =
     Card.view
         [ Options.cs "game-card"
         , Options.cs "game-card-deselected" |> Options.when (not game.selected)
@@ -70,7 +72,7 @@ gameCard game =
             [ Options.css "background" <| "url('" ++ game.thumbnail_url ++ "') center / cover"
             , Options.css "height" "256px"
             , Options.css "padding" "0"
-            , Options.onClick <| ToggleGame game.id
+            , Options.onClick <| userMsg <| ToggleGame game.id
             ]
             [ Card.head
                 [ Options.scrim 0.8
@@ -86,7 +88,14 @@ gameCard game =
             [ text "Lorem ipsum dolor sit amet" ]
         , Card.actions
             [ Card.border ]
-            [ text "buttons here"
+            [ Toggles.checkbox mdlMsg
+                [ index ]
+                mdlModel
+                [ Options.onToggle <| userMsg <| ToggleGame game.id
+                , Toggles.ripple
+                , Toggles.value game.selected
+                ]
+                [ text "Selected" ]
             ]
         ]
 
