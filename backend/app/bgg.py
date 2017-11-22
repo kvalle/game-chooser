@@ -33,7 +33,7 @@ def get_games(user_name, max_retries=4):
 
 	return [{
 		"id": game["@objectid"],
-		"name": game["name"]["#text"],
+		"title": game["name"]["#text"],
 		"year": game["yearpublished"] if "yearpublished" in game else None,
 		"thumbnail_url": game["thumbnail"],
 		"image_url": game["image"]

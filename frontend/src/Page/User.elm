@@ -69,7 +69,7 @@ gameCard game =
             [ Options.scrim 0.8 ]
             [ Options.span
                 [ Color.text Color.white, Typography.title, Typography.contrast 1.0 ]
-                [ text game.name ]
+                [ text game.title ]
             ]
         ]
 
