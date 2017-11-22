@@ -13,6 +13,7 @@ import Material.Card as Card
 import Material.Options as Options
 import Material.Typography as Typography
 import Material.Color as Color
+import Material.Elevation as Elevation
 import Utils
 
 
@@ -62,15 +63,30 @@ gameCard game =
     Card.view
         [ Options.cs "game-card"
         , Options.cs "game-card-deselected" |> Options.when (not game.selected)
-        , Options.css "background" <| "url('" ++ game.thumbnail_url ++ "') center / cover"
-        , Options.onClick <| ToggleGame game.id
+        , Options.css "width" "256px"
+        , Elevation.e4
         ]
-        [ Card.text [ Card.expand ] []
-        , Card.text
-            [ Options.scrim 0.8 ]
-            [ Options.span
-                [ Color.text Color.white, Typography.title, Typography.contrast 1.0 ]
+        [ Card.title
+            [ Options.css "background" <| "url('" ++ game.thumbnail_url ++ "') center / cover"
+            , Options.css "height" "256px"
+            , Options.css "padding" "0"
+            , Options.onClick <| ToggleGame game.id
+            ]
+            [ Card.head
+                [ Options.scrim 0.8
+                , Options.css "padding" "16px"
+                , Options.css "width" "100%"
+                , Color.text Color.white
+                , Typography.title
+                , Typography.contrast 1.0
+                ]
                 [ text game.title ]
+            ]
+        , Card.text []
+            [ text "Lorem ipsum dolor sit amet" ]
+        , Card.actions
+            [ Card.border ]
+            [ text "buttons here"
             ]
         ]
 
