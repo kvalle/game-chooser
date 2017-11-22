@@ -84,8 +84,6 @@ gameCard userMsg mdlMsg mdlModel index game =
                 ]
                 [ text game.title ]
             ]
-        , Card.text []
-            [ text "Lorem ipsum dolor sit amet" ]
         , Card.actions
             [ Card.border ]
             [ Toggles.checkbox mdlMsg
