@@ -67,20 +67,33 @@ gameCard : (Msg -> msg) -> (Material.Msg msg -> msg) -> Material.Model -> Int ->
 gameCard userMsg mdlMsg mdlModel index game =
     Card.view
         [ Options.cs "game-card"
-        , Options.cs "game-card-deselected" |> Options.when (not game.selected)
-        , Options.css "width" "256px"
-        , Elevation.e4
+        , Options.css "width" "200px"
+        , Elevation.transition 250
+        , if game.selected then
+            Elevation.e4
+          else
+            Elevation.e0
         ]
         [ Card.title
-            [ Options.css "background" <| "url('" ++ game.thumbnail_url ++ "') center / cover"
-            , Options.css "height" "256px"
+            [ Options.css "height" "200px"
             , Options.css "padding" "0"
+            , Options.css "position" "relative"
             , Options.onClick <| userMsg <| SetSelection game.id (not game.selected)
             ]
-            [ Card.head
+            [ div
+                [ class <|
+                    if game.selected then
+                        "game-card-image"
+                    else
+                        "game-card-image game-card-deselected"
+                , style [ ( "background", "url('" ++ game.thumbnail_url ++ "') center / cover" ) ]
+                ]
+                []
+            , Card.head
                 [ Options.scrim 0.8
                 , Options.css "padding" "16px"
                 , Options.css "width" "100%"
+                , Options.css "font-size" "1.3rem"
                 , Color.text Color.white
                 , Typography.title
                 , Typography.contrast 1.0

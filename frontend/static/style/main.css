@@ -22,8 +22,21 @@ html, body {
   margin: 7px;
 }
 
+.game-card-image {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+
+  transition: 250ms filter linear;
+}
+
 .game-card-deselected {
-  filter: grayscale(1.0);
+  filter: grayscale(1.0) opacity(0.9) blur(2px);
 }
 
 .home-wrapper {
