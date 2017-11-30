@@ -10,6 +10,8 @@ Vagrant.configure("2") do |config|
     sudo apt-get install inotify-tools -y
     sudo apt-get install python -y
     sudo apt-get install python-setuptools -y
+    sudo apt-get install python-dev -y
+    sudo apt-get install gcc -y
     sudo easy_install pip
     sudo pip install virtualenv
 SCRIPT
