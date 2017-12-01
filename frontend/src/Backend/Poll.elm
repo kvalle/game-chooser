@@ -12,8 +12,11 @@ create : Environment -> Poll -> Task Http.Error PollId
 create env poll =
     case buildUrl env [ "poll" ] of
         Ok url ->
-            request "GET" url Http.emptyBody (Json.Decode.field "id" Json.Decode.string)
-                |> Http.toTask
+            Http.toTask <|
+                request "POST"
+                    url
+                    (Http.jsonBody <| Data.Poll.encode poll)
+                    (Json.Decode.field "id" Json.Decode.string)
 
         Err err ->
             Task.fail <| Http.BadUrl err
