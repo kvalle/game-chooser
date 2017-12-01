@@ -20,17 +20,14 @@ def save_games(games):
 
 def save_poll(game_ids):
 	polls_ref = db.reference('polls')
-	polls_ref.push(game_ids)
+	new_poll_ref = polls_ref.push(game_ids)
+	return new_poll_ref.key
 
 if __name__ == "__main__":
 	connect()
 
-	save_game("68448", {
-	    "image_url": "https://cf.geekdo-images.com/images/pic860217.jpg",
-	    "year": "2010",
-	    "thumbnail_url": "https://cf.geekdo-images.com/images/pic860217_t.jpg",
-	    "id": "68448",
-	    "title": "7 Wonders"
-	})
+	dummy_ref = db.reference('dummy')
+	new_ref = dummy_ref.push({"foo": "baz"})
 
-	print get_game("68448")
+	print new_ref.key
+	print new_ref.get()

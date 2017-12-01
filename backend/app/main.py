@@ -40,15 +40,19 @@ def get_user_games(username):
 
 @application.route("/poll", methods=['POST'])
 @cross_origin(headers=['Content-Type', 'Accept'])
-def post_poll(username):
+def post_poll():
     game_ids = request.get_json()
 
     if game_ids is None:
         return bad_request()
 
-    firebase.save_poll(game_ids)
+    poll_id = firebase.save_poll(game_ids)
 
-    return Response(response=None, status=200, mimetype="application/json")
+    json_data = json.dumps({
+        "id": poll_id
+    })
+    print json_data
+    return Response(response=json_data, status=200, mimetype="application/json")
 
 
 def bad_request():
