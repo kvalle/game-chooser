@@ -1,13 +1,14 @@
 module Page.User exposing (Model, Msg(..), view, init, update)
 
 import Html exposing (..)
-import Html.Events exposing (onClick)
 import Html.Attributes exposing (..)
 import Task exposing (Task)
 import Data.AppState exposing (AppState)
 import Backend.User
 import Backend.Game
+import Backend.Poll
 import Data.User exposing (User)
+import Data.Poll exposing (PollId)
 import Data.Game exposing (Game, GameId)
 import Http
 import Material.Card as Card
@@ -19,16 +20,26 @@ import Material.Toggles as Toggles
 import Material.Button as Button
 import Material
 import Utils
+import Route exposing (Route(..))
 
 
 type Msg
     = SetSelection GameId Bool
     | SelectAll
     | DeselectAll
+    | CreatePoll
+    | PollCreated (Result Http.Error PollId)
+
+
+type State
+    = Selecting
+    | Saving
+    | Failed
 
 
 type alias Model =
-    { user : User
+    { state : State
+    , user : User
     , games : List Game
     }
 
@@ -42,7 +53,7 @@ init appState name =
         getGames =
             Backend.Game.getByName appState.environment name
     in
-        Task.map2 Model getUser getGames
+        Task.map2 (Model Selecting) getUser getGames
 
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
@@ -62,25 +73,55 @@ view model appState userMsg mdlMsg =
         , h4 []
             [ text <| toString (List.length model.games) ++ " games "
             , text <| "(" ++ toString (model.games |> List.filter .selected |> List.length) ++ " selected)"
+            , Button.render mdlMsg
+                [ 0 ]
+                appState.mdl
+                [ Button.raised
+                , Button.disabled |> Options.when (List.all .selected model.games)
+                , Options.onClick (userMsg SelectAll)
+                ]
+                [ text "Select all" ]
+            , Button.render mdlMsg
+                [ 0 ]
+                appState.mdl
+                [ Button.raised
+                , Button.disabled |> Options.when (List.all (not << .selected) model.games)
+                , Options.onClick (userMsg DeselectAll)
+                ]
+                [ text "Deselect all" ]
+            , div [] <|
+                case model.state of
+                    Selecting ->
+                        [ createPollButton model userMsg mdlMsg appState.mdl ]
+
+                    Failed ->
+                        [ createPollButton model userMsg mdlMsg appState.mdl
+                        , span [] [ text "Creating poll failed :( Please try again…" ]
+                        ]
+
+                    Saving ->
+                        [ Button.render mdlMsg
+                            [ 0 ]
+                            appState.mdl
+                            [ Button.disabled ]
+                            [ text "Creating…" ]
+                        ]
             ]
-        , Button.render mdlMsg
-            [ 0 ]
-            appState.mdl
-            [ Button.raised
-            , Button.disabled |> Options.when (List.all .selected model.games)
-            , Options.onClick (userMsg SelectAll)
-            ]
-            [ text "Select all" ]
-        , Button.render mdlMsg
-            [ 0 ]
-            appState.mdl
-            [ Button.raised
-            , Button.disabled |> Options.when (List.all (not << .selected) model.games)
-            , Options.onClick (userMsg DeselectAll)
-            ]
-            [ text "Deselect all" ]
         , div [ class "game-cards" ] <| List.indexedMap (gameCard userMsg mdlMsg appState.mdl) model.games
         ]
+
+
+createPollButton : Model -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Material.Model -> Html msg
+createPollButton model userMsg mdlMsg mdlModel =
+    Button.render mdlMsg
+        [ 0 ]
+        mdlModel
+        [ Button.raised
+        , Button.colored
+        , Button.disabled |> Options.when (List.all (not << .selected) model.games)
+        , Options.onClick (userMsg CreatePoll)
+        ]
+        [ text "Create poll" ]
 
 
 gameCard : (Msg -> msg) -> (Material.Msg msg -> msg) -> Material.Model -> Int -> Game -> Html msg
@@ -154,3 +195,20 @@ update msg appState model =
             ( { model | games = model.games |> List.map (Data.Game.setSelection False) }
             , Cmd.none
             )
+
+        CreatePoll ->
+            ( { model | state = Saving }
+            , Task.attempt PollCreated <|
+                Backend.Poll.create appState.environment <|
+                    List.map .id model.games
+            )
+
+        PollCreated result ->
+            case result of
+                Ok pollId ->
+                    ( model
+                    , Route.newUrl (NewPoll pollId)
+                    )
+
+                Err error ->
+                    ( { model | state = Failed }, Cmd.none )

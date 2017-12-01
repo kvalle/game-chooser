@@ -11,6 +11,7 @@ import Html exposing (..)
 import Views
 import Page.User
 import Page.Home
+import Page.NewPoll
 import Data.Environment
 
 
@@ -29,6 +30,7 @@ type Page
     = Blank
     | Home Page.Home.Model
     | User Page.User.Model
+    | NewPoll Page.NewPoll.Model
     | Error String
 
 
@@ -134,6 +136,11 @@ updateWithRoute route model =
                 , Cmd.none
                 )
 
+            Route.NewPoll pollId ->
+                ( { model | pageState = Loaded (NewPoll <| Page.NewPoll.init pollId) }
+                , Cmd.none
+                )
+
             Route.User name ->
                 transition UserPageLoaded (Page.User.init model.appState name)
 
@@ -160,6 +167,10 @@ view model =
 
         Loaded (Home homeModel) ->
             Page.Home.view homeModel model.appState HomeMsg Mdl
+                |> Views.frame model.appState
+
+        Loaded (NewPoll newPollModel) ->
+            Page.NewPoll.view newPollModel
                 |> Views.frame model.appState
 
         Loaded (User userModel) ->

@@ -16,6 +16,7 @@ import UrlParser as Url exposing ((</>), Parser, top, oneOf, parseHash, s, strin
 type Route
     = Home
     | User String
+    | NewPoll String
     | Unknown
 
 
@@ -24,6 +25,7 @@ route =
     oneOf
         [ Url.map Home top
         , Url.map User (s "u" </> string)
+        , Url.map NewPoll (s "poll" </> string </> s "new")
         ]
 
 
@@ -41,6 +43,9 @@ routeToString page =
 
                 User username ->
                     [ "u", username ]
+
+                NewPoll pollId ->
+                    [ "poll", pollId, "new" ]
 
                 Unknown ->
                     []
