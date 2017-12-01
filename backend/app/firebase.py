@@ -5,7 +5,7 @@ from firebase_admin import db
 import config
 
 def connect():
-	cred = credentials.Certificate('config/dev-firebase-serviceAccountKey.json')
+	cred = credentials.Certificate('firebase-serviceAccountKey.json')
 	firebase_admin.initialize_app(cred, config.firebase)
 
 def get_game(game_id):
