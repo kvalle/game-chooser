@@ -8,10 +8,10 @@ from flask import Flask, request, jsonify, _app_ctx_stack, Response
 from flask_cors import cross_origin
 
 import bgg
-
+import firebase
 
 application = Flask("Game Chooser")
-
+firebase.connect()
 
 @application.route("/ping", methods=['GET'])
 def ping():
@@ -22,13 +22,17 @@ def ping():
 @cross_origin(headers=['Content-Type', 'Accept'])
 def get_user(username):
     user = bgg.get_user(username)
-    data = json.dumps(user)
-    return Response(response=data, status=200, mimetype="application/json")
+    json_data = json.dumps(user)
+    return Response(response=json_data, status=200, mimetype="application/json")
 
 
 @application.route("/user/<username>/games", methods=['GET'])
 @cross_origin(headers=['Content-Type', 'Accept'])
 def get_user_games(username):
     games = bgg.get_games(username)
-    data = json.dumps(games)
-    return Response(response=data, status=200, mimetype="application/json")
+
+    db_games = { game["id"]: game for game in games }
+    firebase.save_games(db_games)
+
+    json_data = json.dumps(games)
+    return Response(response=json_data, status=200, mimetype="application/json")
