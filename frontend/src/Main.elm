@@ -55,6 +55,7 @@ init location =
                 , appState =
                     { mdl = Material.model
                     , environment = Data.Environment.fromLocation location
+                    , hostname = location.host
                     }
                 }
     in

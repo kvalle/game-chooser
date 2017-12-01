@@ -33,13 +33,17 @@ init pollId =
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
 view model appState newPollMsg mdlMsg =
     let
-        url =
-            "poll/" ++ model
+        relativeUrl =
+            "#/poll/" ++ model
     in
         div [ class "new-poll-wrapper" ]
             [ h3 [] [ text <| "Poll created!" ]
             , span [] [ text "Send this link to your friends: " ]
-            , span [] [ text url ]
+            , a
+                [ class "new-poll-link"
+                , href relativeUrl
+                ]
+                [ text <| appState.hostname ++ relativeUrl ]
             , Button.render mdlMsg
                 [ 0 ]
                 appState.mdl

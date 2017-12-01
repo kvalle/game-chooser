@@ -80,3 +80,8 @@ html, body {
 .go-to-poll {
   margin-top: 20px;
 }
+
+.new-poll-link {
+  padding: 10px;
+  font-size: 1.4rem;
+}
