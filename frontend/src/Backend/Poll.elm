@@ -16,4 +16,4 @@ create env poll =
                 |> Http.toTask
 
         Err err ->
-            Task.fail <| Http.BadUrl "err"
+            Task.fail <| Http.BadUrl err
