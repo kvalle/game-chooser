@@ -1,6 +1,7 @@
 module Page.User exposing (Model, Msg(..), view, init, update)
 
 import Html exposing (..)
+import Html.Events exposing (onClick)
 import Html.Attributes exposing (..)
 import Task exposing (Task)
 import Data.AppState exposing (AppState)
@@ -21,6 +22,8 @@ import Utils
 
 type Msg
     = SetSelection GameId Bool
+    | SelectAll
+    | DeselectAll
 
 
 type alias Model =
@@ -59,6 +62,8 @@ view model appState userMsg mdlMsg =
             [ text <| toString (List.length model.games) ++ " games "
             , text <| "(" ++ toString (model.games |> List.filter .selected |> List.length) ++ " selected)"
             ]
+        , button [ onClick (userMsg SelectAll) ] [ text "Select all" ]
+        , button [ onClick (userMsg DeselectAll) ] [ text "Deselect all" ]
         , div [ class "game-cards" ] <| List.indexedMap (gameCard userMsg mdlMsg appState.mdl) model.games
         ]
 
@@ -118,6 +123,19 @@ update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
 update msg appState model =
     case msg of
         SetSelection id selected ->
-            ( { model | games = Utils.updateById id (Data.Game.setSelection selected) model.games }
+            ( { model
+                | games =
+                    Utils.updateById id (Data.Game.setSelection selected) model.games
+              }
+            , Cmd.none
+            )
+
+        SelectAll ->
+            ( { model | games = model.games |> List.map (Data.Game.setSelection True) }
+            , Cmd.none
+            )
+
+        DeselectAll ->
+            ( { model | games = model.games |> List.map (Data.Game.setSelection False) }
             , Cmd.none
             )
