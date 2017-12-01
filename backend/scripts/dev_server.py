@@ -18,9 +18,13 @@ if backend_dir not in sys.path:
 	sys.path.insert(0, backend_dir)
 
 import app.main
+import app.config
 
 application = app.main.application
 
+if app.config.env != "dev":
+	print "Attempted to run dev server with non-dev config. Aborted."
+	sys.exit(1)
 
 if __name__ == "__main__":
     application.debug = True
