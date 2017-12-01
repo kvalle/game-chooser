@@ -68,3 +68,15 @@ html, body {
 .user-wrapper {
 
 }
+
+.new-poll-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.go-to-poll {
+  margin-top: 20px;
+}

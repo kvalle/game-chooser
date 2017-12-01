@@ -8,11 +8,17 @@ module Page.NewPoll
         )
 
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Data.Poll exposing (PollId)
+import Material
+import Material.Options as Options
+import Material.Button as Button
+import Route exposing (Route(..))
+import Data.AppState exposing (AppState)
 
 
 type Msg
-    = NoOp
+    = GoToPoll PollId
 
 
 type alias Model =
@@ -24,13 +30,29 @@ init pollId =
     pollId
 
 
-view : Model -> Html msg
-view model =
-    text <| "new poll: " ++ model
+view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
+view model appState newPollMsg mdlMsg =
+    let
+        url =
+            "poll/" ++ model
+    in
+        div [ class "new-poll-wrapper" ]
+            [ h3 [] [ text <| "Poll created!" ]
+            , span [] [ text "Send this link to your friends: " ]
+            , span [] [ text url ]
+            , Button.render mdlMsg
+                [ 0 ]
+                appState.mdl
+                [ Button.raised
+                , Options.cs "go-to-poll"
+                , Options.onClick <| newPollMsg (GoToPoll model)
+                ]
+                [ text "Go to poll" ]
+            ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        GoToPoll pollId ->
+            ( model, Route.newUrl <| Poll pollId )

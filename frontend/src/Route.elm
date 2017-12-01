@@ -17,6 +17,7 @@ type Route
     = Home
     | User String
     | NewPoll String
+    | Poll String
     | Unknown
 
 
@@ -26,6 +27,7 @@ route =
         [ Url.map Home top
         , Url.map User (s "u" </> string)
         , Url.map NewPoll (s "poll" </> string </> s "new")
+        , Url.map Poll (s "poll" </> string)
         ]
 
 
@@ -46,6 +48,9 @@ routeToString page =
 
                 NewPoll pollId ->
                     [ "poll", pollId, "new" ]
+
+                Poll pollId ->
+                    [ "poll", pollId ]
 
                 Unknown ->
                     []

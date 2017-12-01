@@ -12,6 +12,7 @@ import Views
 import Page.User
 import Page.Home
 import Page.NewPoll
+import Page.Poll
 import Data.Environment
 
 
@@ -30,6 +31,7 @@ type Page
     = Blank
     | Home Page.Home.Model
     | User Page.User.Model
+    | Poll Page.Poll.Model
     | NewPoll Page.NewPoll.Model
     | Error String
 
@@ -105,6 +107,21 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
+        Messages.NewPollMsg subMsg ->
+            case getPage model.pageState of
+                NewPoll subModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.NewPoll.update subMsg subModel
+                    in
+                        ( { model | pageState = Loaded (NewPoll newModel) }
+                        , Cmd.map NewPollMsg newCmd
+                        )
+
+                _ ->
+                    -- Disregard messages when on other pages
+                    ( model, Cmd.none )
+
         Messages.UserPageLoaded result ->
             case result of
                 Ok subModel ->
@@ -141,6 +158,11 @@ updateWithRoute route model =
                 , Cmd.none
                 )
 
+            Route.Poll pollId ->
+                ( { model | pageState = Loaded (Poll <| Page.Poll.init pollId) }
+                , Cmd.none
+                )
+
             Route.User name ->
                 transition UserPageLoaded (Page.User.init model.appState name)
 
@@ -170,7 +192,11 @@ view model =
                 |> Views.frame model.appState
 
         Loaded (NewPoll newPollModel) ->
-            Page.NewPoll.view newPollModel
+            Page.NewPoll.view newPollModel model.appState NewPollMsg Mdl
+                |> Views.frame model.appState
+
+        Loaded (Poll pollModel) ->
+            Page.Poll.view pollModel model.appState Mdl
                 |> Views.frame model.appState
 
         Loaded (User userModel) ->
