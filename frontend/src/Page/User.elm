@@ -16,6 +16,7 @@ import Material.Typography as Typography
 import Material.Color as Color
 import Material.Elevation as Elevation
 import Material.Toggles as Toggles
+import Material.Button as Button
 import Material
 import Utils
 
@@ -62,8 +63,22 @@ view model appState userMsg mdlMsg =
             [ text <| toString (List.length model.games) ++ " games "
             , text <| "(" ++ toString (model.games |> List.filter .selected |> List.length) ++ " selected)"
             ]
-        , button [ onClick (userMsg SelectAll) ] [ text "Select all" ]
-        , button [ onClick (userMsg DeselectAll) ] [ text "Deselect all" ]
+        , Button.render mdlMsg
+            [ 0 ]
+            appState.mdl
+            [ Button.raised
+            , Button.disabled |> Options.when (List.all .selected model.games)
+            , Options.onClick (userMsg SelectAll)
+            ]
+            [ text "Select all" ]
+        , Button.render mdlMsg
+            [ 0 ]
+            appState.mdl
+            [ Button.raised
+            , Button.disabled |> Options.when (List.all (not << .selected) model.games)
+            , Options.onClick (userMsg DeselectAll)
+            ]
+            [ text "Deselect all" ]
         , div [ class "game-cards" ] <| List.indexedMap (gameCard userMsg mdlMsg appState.mdl) model.games
         ]
 
