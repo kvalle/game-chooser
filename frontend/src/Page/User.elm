@@ -14,7 +14,7 @@ import Http
 import Material.Options as Options
 import Material.Button as Button
 import Material
-import Utils
+import Utils exposing ((<<<))
 import Route exposing (Route(..))
 import Views.GameCard
 
@@ -91,7 +91,7 @@ view model appState userMsg mdlMsg =
             ]
         , div [ class "game-cards" ] <|
             Views.GameCard.cards
-                (\id selected -> userMsg <| SetSelection id selected)
+                (userMsg <<< SetSelection)
                 mdlMsg
                 appState.mdl
                 model.games
