@@ -160,7 +160,7 @@ update msg appState model =
             ( { model | state = Saving }
             , Task.attempt PollCreated <|
                 Backend.Poll.create appState.environment <|
-                    List.map .id model.games
+                    (model.games |> List.filter .selected |> List.map .id)
             )
 
         PollCreated result ->
