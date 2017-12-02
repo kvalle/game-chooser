@@ -9,10 +9,11 @@ import Data.AppState exposing (AppState)
 import Task
 import Html exposing (..)
 import Views
-import Page.User
 import Page.Home
-import Page.NewPoll
+import Page.User
 import Page.Poll
+import Page.NewPoll
+import Page.AnswerPoll
 import Data.Environment
 
 
@@ -33,6 +34,7 @@ type Page
     | User Page.User.Model
     | Poll Page.Poll.Model
     | NewPoll Page.NewPoll.Model
+    | AnswerPoll Page.AnswerPoll.Model
     | Error String
 
 
@@ -123,6 +125,21 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
+        Messages.AnswerPollMsg subMsg ->
+            case getPage model.pageState of
+                AnswerPoll subModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.AnswerPoll.update subMsg subModel
+                    in
+                        ( { model | pageState = Loaded (AnswerPoll newModel) }
+                        , Cmd.map AnswerPollMsg newCmd
+                        )
+
+                _ ->
+                    -- Disregard messages when on other pages
+                    ( model, Cmd.none )
+
         Messages.UserPageLoaded result ->
             case result of
                 Ok subModel ->
@@ -154,13 +171,18 @@ updateWithRoute route model =
                 , Cmd.none
                 )
 
+            Route.Poll pollId ->
+                ( { model | pageState = Loaded (Poll <| Page.Poll.init pollId) }
+                , Cmd.none
+                )
+
             Route.NewPoll pollId ->
                 ( { model | pageState = Loaded (NewPoll <| Page.NewPoll.init pollId) }
                 , Cmd.none
                 )
 
-            Route.Poll pollId ->
-                ( { model | pageState = Loaded (Poll <| Page.Poll.init pollId) }
+            Route.AnswerPoll pollId ->
+                ( { model | pageState = Loaded (AnswerPoll <| Page.AnswerPoll.init pollId) }
                 , Cmd.none
                 )
 
@@ -194,6 +216,10 @@ view model =
 
         Loaded (NewPoll newPollModel) ->
             Page.NewPoll.view newPollModel model.appState NewPollMsg Mdl
+                |> Views.frame model.appState
+
+        Loaded (AnswerPoll newPollModel) ->
+            Page.AnswerPoll.view newPollModel model.appState AnswerPollMsg Mdl
                 |> Views.frame model.appState
 
         Loaded (Poll pollModel) ->

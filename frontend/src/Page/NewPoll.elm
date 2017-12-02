@@ -19,6 +19,7 @@ import Data.AppState exposing (AppState)
 
 type Msg
     = GoToPoll PollId
+    | GoToAnswerPoll PollId
 
 
 type alias Model =
@@ -34,7 +35,7 @@ view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html ms
 view model appState newPollMsg mdlMsg =
     let
         relativeUrl =
-            "#/poll/" ++ model
+            "#/poll/" ++ model ++ "/answer"
     in
         div [ class "new-poll-wrapper" ]
             [ h3 [] [ text <| "Poll created!" ]
@@ -60,3 +61,6 @@ update msg model =
     case msg of
         GoToPoll pollId ->
             ( model, Route.newUrl <| Poll pollId )
+
+        GoToAnswerPoll pollId ->
+            ( model, Route.newUrl <| AnswerPoll pollId )
