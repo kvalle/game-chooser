@@ -8,7 +8,7 @@ import Dict exposing (Dict)
 
 
 type alias Poll =
-    { id : Maybe PollId
+    { id : PollId
     , votes : Dict GameId (List Name)
     }
 
@@ -24,11 +24,7 @@ type alias Name =
 encode : Poll -> Json.Encode.Value
 encode poll =
     Json.Encode.object
-        [ ( "id"
-          , poll.id
-                |> Maybe.map Json.Encode.string
-                |> Maybe.withDefault Json.Encode.null
-          )
+        [ ( "id", Json.Encode.string poll.id )
         , ( "votes"
           , Json.Encode.Extra.dict
                 identity
@@ -41,5 +37,5 @@ encode poll =
 decoder : Json.Decode.Decoder Poll
 decoder =
     Json.Decode.map2 Poll
-        (Json.Decode.field "id" <| Json.Decode.maybe Json.Decode.string)
+        (Json.Decode.field "id" Json.Decode.string)
         (Json.Decode.field "votes" <| Json.Decode.dict <| Json.Decode.list Json.Decode.string)
