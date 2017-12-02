@@ -60,7 +60,7 @@ def get_poll(poll_id):
         "id": poll_id,
         "games": { game_id: firebase.get_game(game_id)
                     for game_id in fb_poll["game_ids"]},
-        "votes": fb_poll["votes"]
+        "votes": fb_poll["votes"] if "votes" in fb_poll else {}
     }
 
     json_data = json.dumps(poll)
