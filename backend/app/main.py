@@ -51,7 +51,14 @@ def post_poll():
     json_data = json.dumps({
         "id": poll_id
     })
-    print json_data
+    return Response(response=json_data, status=200, mimetype="application/json")
+
+@application.route("/poll/<poll_id>", methods=['GET'])
+@cross_origin(headers=['Content-Type', 'Accept'])
+def get_poll(poll_id):
+    poll = firebase.get_poll(poll_id)
+
+    json_data = json.dumps(poll)
     return Response(response=json_data, status=200, mimetype="application/json")
 
 

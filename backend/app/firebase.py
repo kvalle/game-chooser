@@ -23,6 +23,10 @@ def save_poll(game_ids):
 	new_poll_ref = polls_ref.push(game_ids)
 	return new_poll_ref.key
 
+def get_poll(poll_id):
+	return db.reference('polls').child(poll_id).get()
+
+
 if __name__ == "__main__":
 	connect()
 
