@@ -9,7 +9,7 @@ import Dict exposing (Dict)
 
 type alias Poll =
     { id : PollId
-    , votes : Dict GameId (List Name)
+    , votes : Dict Name (List GameId)
     }
 
 
