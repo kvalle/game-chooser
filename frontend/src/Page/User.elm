@@ -11,16 +11,12 @@ import Data.User exposing (User)
 import Data.Poll exposing (PollId)
 import Data.Game exposing (Game, GameId)
 import Http
-import Material.Card as Card
 import Material.Options as Options
-import Material.Typography as Typography
-import Material.Color as Color
-import Material.Elevation as Elevation
-import Material.Toggles as Toggles
 import Material.Button as Button
 import Material
 import Utils
 import Route exposing (Route(..))
+import Views.GameCard
 
 
 type Msg
@@ -73,22 +69,8 @@ view model appState userMsg mdlMsg =
         , h4 []
             [ text <| toString (List.length model.games) ++ " games "
             , text <| "(" ++ toString (model.games |> List.filter .selected |> List.length) ++ " selected)"
-            , Button.render mdlMsg
-                [ 0 ]
-                appState.mdl
-                [ Button.raised
-                , Button.disabled |> Options.when (List.all .selected model.games)
-                , Options.onClick (userMsg SelectAll)
-                ]
-                [ text "Select all" ]
-            , Button.render mdlMsg
-                [ 0 ]
-                appState.mdl
-                [ Button.raised
-                , Button.disabled |> Options.when (List.all (not << .selected) model.games)
-                , Options.onClick (userMsg DeselectAll)
-                ]
-                [ text "Deselect all" ]
+            , selectAllButton model.games (userMsg SelectAll) mdlMsg appState.mdl
+            , deselectAllButton model.games (userMsg DeselectAll) mdlMsg appState.mdl
             , div [] <|
                 case model.state of
                     Selecting ->
@@ -107,8 +89,37 @@ view model appState userMsg mdlMsg =
                             [ text "Creating…" ]
                         ]
             ]
-        , div [ class "game-cards" ] <| List.indexedMap (gameCard userMsg mdlMsg appState.mdl) model.games
+        , div [ class "game-cards" ] <|
+            Views.GameCard.cards
+                (\id selected -> userMsg <| SetSelection id selected)
+                mdlMsg
+                appState.mdl
+                model.games
         ]
+
+
+selectAllButton : List Game -> msg -> (Material.Msg msg -> msg) -> Material.Model -> Html msg
+selectAllButton games msg mdlMsg mdlModel =
+    Button.render mdlMsg
+        [ 0 ]
+        mdlModel
+        [ Button.raised
+        , Button.disabled |> Options.when (List.all .selected games)
+        , Options.onClick msg
+        ]
+        [ text "Select all" ]
+
+
+deselectAllButton : List Game -> msg -> (Material.Msg msg -> msg) -> Material.Model -> Html msg
+deselectAllButton games msg mdlMsg mdlModel =
+    Button.render mdlMsg
+        [ 0 ]
+        mdlModel
+        [ Button.raised
+        , Button.disabled |> Options.when (List.all (not << .selected) games)
+        , Options.onClick msg
+        ]
+        [ text "Deselect all" ]
 
 
 createPollButton : Model -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Material.Model -> Html msg
@@ -122,57 +133,6 @@ createPollButton model userMsg mdlMsg mdlModel =
         , Options.onClick (userMsg CreatePoll)
         ]
         [ text "Create poll" ]
-
-
-gameCard : (Msg -> msg) -> (Material.Msg msg -> msg) -> Material.Model -> Int -> Game -> Html msg
-gameCard userMsg mdlMsg mdlModel index game =
-    Card.view
-        [ Options.cs "game-card"
-        , Options.css "width" "200px"
-        , Elevation.transition 250
-        , if game.selected then
-            Elevation.e4
-          else
-            Elevation.e0
-        ]
-        [ Card.title
-            [ Options.css "height" "200px"
-            , Options.css "padding" "0"
-            , Options.css "position" "relative"
-            , Options.onClick <| userMsg <| SetSelection game.id (not game.selected)
-            ]
-            [ div
-                [ class <|
-                    if game.selected then
-                        "game-card-image"
-                    else
-                        "game-card-image game-card-deselected"
-                , style [ ( "background", "url('" ++ game.thumbnail_url ++ "') center / cover" ) ]
-                ]
-                []
-            , Card.head
-                [ Options.scrim 0.8
-                , Options.css "padding" "16px"
-                , Options.css "width" "100%"
-                , Options.css "font-size" "1.3rem"
-                , Color.text Color.white
-                , Typography.title
-                , Typography.contrast 1.0
-                ]
-                [ text game.title ]
-            ]
-        , Card.actions
-            [ Card.border ]
-            [ Toggles.checkbox mdlMsg
-                [ index ]
-                mdlModel
-                [ Options.onToggle <| userMsg <| SetSelection game.id (not game.selected)
-                , Toggles.ripple
-                , Toggles.value game.selected
-                ]
-                [ text "Selected" ]
-            ]
-        ]
 
 
 update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
