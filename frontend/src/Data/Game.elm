@@ -42,7 +42,7 @@ encode game =
 
 decoder : Json.Decode.Decoder Game
 decoder =
-    Json.Decode.map5 (Game True)
+    Json.Decode.map5 (Game False)
         (Json.Decode.field "id" Json.Decode.string)
         (Json.Decode.field "title" Json.Decode.string)
         (Json.Decode.field "thumbnail_url" Json.Decode.string)
