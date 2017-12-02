@@ -1,9 +1,7 @@
-module Data.Poll exposing (Poll, PollId, encode, decoder)
+module Data.Poll exposing (Poll, PollId, decoder)
 
 import Data.Game exposing (GameId, Game)
 import Json.Decode
-import Json.Encode
-import Json.Encode.Extra
 import Dict exposing (Dict)
 
 
@@ -19,19 +17,6 @@ type alias PollId =
 
 type alias Name =
     String
-
-
-encode : Poll -> Json.Encode.Value
-encode poll =
-    Json.Encode.object
-        [ ( "id", Json.Encode.string poll.id )
-        , ( "votes"
-          , Json.Encode.Extra.dict
-                identity
-                (Json.Encode.list << List.map Json.Encode.string)
-                poll.votes
-          )
-        ]
 
 
 decoder : Json.Decode.Decoder Poll
