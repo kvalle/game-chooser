@@ -1,13 +1,15 @@
-module Backend.Poll exposing (create, getById)
+module Backend.Poll exposing (create, getById, vote)
 
 import Data.Poll exposing (Poll, PollId)
 import Data.Game exposing (GameId)
 import Task exposing (Task)
-import Http exposing (Request)
+import Http exposing (Request, Error(..))
 import Json.Decode
 import Json.Encode
 import Data.Environment exposing (Environment(..))
 import Backend.Common exposing (buildUrl, request)
+import Process
+import Time
 
 
 create : Environment -> List GameId -> Task Http.Error PollId
@@ -35,3 +37,10 @@ getById env pollId =
 
         Err err ->
             Task.fail <| Http.BadUrl err
+
+
+vote : Environment -> PollId -> List GameId -> Task Http.Error ()
+vote env pollId gameIds =
+    Process.sleep (Time.second * 2)
+        |> Task.andThen (always Task.succeed ())
+        |> Task.mapError (always BadUrl "asdf")

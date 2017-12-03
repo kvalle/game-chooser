@@ -1,4 +1,4 @@
-module Data.Poll exposing (Poll, PollId, decoder)
+module Data.Poll exposing (Poll, PollId, decoder, setGame)
 
 import Data.Game exposing (GameId, Game)
 import Json.Decode
@@ -26,3 +26,10 @@ decoder =
         (Json.Decode.field "id" Json.Decode.string)
         (Json.Decode.field "games" <| Json.Decode.dict <| Data.Game.decoder)
         (Json.Decode.field "votes" <| Json.Decode.dict <| Json.Decode.list Json.Decode.string)
+
+
+setGame : (Game -> Game) -> GameId -> Poll -> Poll
+setGame updateFn gameId poll =
+    { poll
+        | games = Dict.update gameId (Maybe.map updateFn) poll.games
+    }

@@ -130,7 +130,7 @@ update msg model =
                 AnswerPoll subModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.AnswerPoll.update subMsg subModel
+                            Page.AnswerPoll.update subMsg model.appState subModel
                     in
                         ( { model | pageState = Loaded (AnswerPoll newModel) }
                         , Cmd.map AnswerPollMsg newCmd

@@ -24,32 +24,102 @@ import Dict
 import Views.GameCard
 
 
-type Msg
-    = GoToPoll PollId
-    | SetSelection GameId Bool
-    | SubmitAnswer
+type State
+    = Selecting
+    | Saving
+    | Failed
 
 
 type alias Model =
-    Poll
+    { state : State
+    , poll : Poll
+    }
+
+
+setPoll : Poll -> Model -> Model
+setPoll poll model =
+    { model | poll = poll }
 
 
 init : AppState -> String -> Task Http.Error Model
 init appState pollId =
-    Backend.Poll.getById appState.environment pollId
+    Task.map (Model Selecting) <|
+        Backend.Poll.getById appState.environment pollId
+
+
+type Msg
+    = GoToPoll PollId
+    | SetSelection GameId Bool
+    | SubmitAnswer
+    | AnswerSubmitted (Result Http.Error ())
+
+
+update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
+update msg appState model =
+    case msg of
+        GoToPoll pollId ->
+            ( model, Route.newUrl <| Route.Poll pollId )
+
+        SetSelection gameId state ->
+            let
+                newPoll =
+                    model.poll |> Data.Poll.setGame (Data.Game.setSelection state) gameId
+            in
+                ( model |> setPoll newPoll
+                , Cmd.none
+                )
+
+        SubmitAnswer ->
+            let
+                selectedGameIds =
+                    model.poll.games
+                        |> Dict.values
+                        |> List.filter .selected
+                        |> List.map .id
+            in
+                ( { model | state = Saving }
+                , Backend.Poll.vote appState.environment model.poll.id selectedGameIds
+                    |> Task.attempt AnswerSubmitted
+                )
+
+        AnswerSubmitted result ->
+            case result of
+                Err err ->
+                    ( { model | state = Failed }, Cmd.none )
+
+                Ok () ->
+                    ( model
+                    , Route.newUrl <| Route.Poll model.poll.id
+                    )
 
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
 view model appState newPollMsg mdlMsg =
     div [ class "answer-poll-wrapper" ]
         [ h3 [] [ text <| "What do you want to play?" ]
-        , submitButton (Dict.values model.games) (newPollMsg SubmitAnswer) mdlMsg appState.mdl
+        , span [] <|
+            case model.state of
+                Selecting ->
+                    [ submitButton (Dict.values model.poll.games) (newPollMsg SubmitAnswer) mdlMsg appState.mdl ]
+
+                Failed ->
+                    [ submitButton (Dict.values model.poll.games) (newPollMsg SubmitAnswer) mdlMsg appState.mdl
+                    , span [] [ text "Submitting answers failed :( Please try again…" ]
+                    ]
+
+                Saving ->
+                    [ Button.render mdlMsg
+                        [ 0 ]
+                        appState.mdl
+                        [ Button.disabled ]
+                        [ text "Saving…" ]
+                    ]
         , div [ class "game-cards" ] <|
             Views.GameCard.cards
                 (newPollMsg <<< SetSelection)
                 mdlMsg
                 appState.mdl
-                (Dict.values model.games)
+                (Dict.values model.poll.games)
         ]
 
 
@@ -64,24 +134,3 @@ submitButton games msg mdlMsg mdlModel =
         , Options.onClick msg
         ]
         [ text "Submit vote" ]
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        GoToPoll pollId ->
-            ( model, Route.newUrl <| Route.Poll pollId )
-
-        SetSelection gameId state ->
-            ( { model
-                | games =
-                    Dict.update gameId
-                        (Maybe.map (Data.Game.setSelection state))
-                        model.games
-              }
-            , Cmd.none
-            )
-
-        SubmitAnswer ->
-            -- TODO
-            ( model, Cmd.none )
