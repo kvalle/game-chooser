@@ -1,8 +1,28 @@
-module Backend.Common exposing (buildUrl, request, expectEmptyString)
+module Backend.Common
+    exposing
+        ( buildUrl
+        , expectEmptyString
+        , defaultConfig
+        , send
+        , post
+        , get
+        )
 
-import Http exposing (Request)
-import Json.Decode
+import Http exposing (Request, Error)
 import Data.Environment exposing (Environment(..))
+import Task exposing (Task)
+import Time exposing (Time)
+
+
+type alias Config a =
+    { method : String
+    , headers : List Http.Header
+    , url : String
+    , body : Http.Body
+    , expect : Http.Expect a
+    , timeout : Maybe Time
+    , withCredentials : Bool
+    }
 
 
 buildUrl : Environment -> List String -> Result String String
@@ -13,19 +33,6 @@ buildUrl env fragments =
 
         Unknown err ->
             Err ""
-
-
-request : String -> String -> Http.Body -> Json.Decode.Decoder a -> Http.Request a
-request method url body decoder =
-    Http.request
-        { method = method
-        , headers = [ Http.header "Accept" "application/json" ]
-        , url = url
-        , body = body
-        , expect = Http.expectJson decoder
-        , timeout = Nothing
-        , withCredentials = False
-        }
 
 
 expectEmptyString : value -> Http.Expect value
@@ -39,3 +46,45 @@ expectEmptyString value =
                 _ ->
                     Err "Bad payload: Expected the empty string"
         )
+
+
+defaultConfig : Config ()
+defaultConfig =
+    { method = "GET"
+    , headers = [ Http.header "Accept" "application/json" ]
+    , url = ""
+    , body = Http.emptyBody
+    , expect = expectEmptyString ()
+    , timeout = Nothing
+    , withCredentials = False
+    }
+
+
+send : Result String String -> Config a -> Task Http.Error a
+send urlResult config =
+    case urlResult of
+        Ok url ->
+            Http.toTask <| Http.request { config | url = url }
+
+        Err err ->
+            Task.fail <| Http.BadUrl err
+
+
+post : Result String String -> Http.Body -> Http.Expect a -> Task Error a
+post urlResult body responseExpectation =
+    send urlResult
+        { defaultConfig
+            | method = "POST"
+            , body = body
+            , expect = responseExpectation
+        }
+
+
+get : Result String String -> Http.Expect a -> Task Error a
+get urlResult responseExpectation =
+    send urlResult
+        { defaultConfig
+            | method = "GET"
+            , body = Http.emptyBody
+            , expect = responseExpectation
+        }
