@@ -11,9 +11,8 @@ import Backend.Common
     exposing
         ( buildUrl
         , expectEmptyString
-        , defaultConfig
-        , send
         , post
+        , get
         )
 
 
@@ -28,9 +27,8 @@ create env gameIds =
 
 getById : Environment -> PollId -> Task Http.Error Poll
 getById env pollId =
-    post
+    get
         (buildUrl env [ "poll", pollId ])
-        Http.emptyBody
         (Http.expectJson Data.Poll.decoder)
 
 
