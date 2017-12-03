@@ -1,4 +1,4 @@
-module Backend.Common exposing (buildUrl, request)
+module Backend.Common exposing (buildUrl, request, expectEmptyString)
 
 import Http exposing (Request)
 import Json.Decode
@@ -26,3 +26,16 @@ request method url body decoder =
         , timeout = Nothing
         , withCredentials = False
         }
+
+
+expectEmptyString : value -> Http.Expect value
+expectEmptyString value =
+    Http.expectStringResponse <|
+        (\response ->
+            case response.body of
+                "" ->
+                    Ok value
+
+                _ ->
+                    Err "Bad payload: Expected the empty string"
+        )

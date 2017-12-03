@@ -7,9 +7,7 @@ import Http exposing (Request, Error(..))
 import Json.Decode
 import Json.Encode
 import Data.Environment exposing (Environment(..))
-import Backend.Common exposing (buildUrl, request)
-import Process
-import Time
+import Backend.Common exposing (buildUrl, request, expectEmptyString)
 
 
 create : Environment -> List GameId -> Task Http.Error PollId
@@ -41,6 +39,21 @@ getById env pollId =
 
 vote : Environment -> PollId -> List GameId -> Task Http.Error ()
 vote env pollId gameIds =
-    Process.sleep (Time.second * 2)
-        |> Task.andThen (always Task.succeed ())
-        |> Task.mapError (always BadUrl "asdf")
+    case buildUrl env [ "poll", pollId, "vote" ] of
+        Ok url ->
+            Http.toTask <|
+                Http.request
+                    { method = "POST"
+                    , headers = [ Http.header "Accept" "application/json" ]
+                    , url = url
+                    , body =
+                        (Http.jsonBody <|
+                            (Json.Encode.list << List.map Json.Encode.string) gameIds
+                        )
+                    , expect = expectEmptyString ()
+                    , timeout = Nothing
+                    , withCredentials = False
+                    }
+
+        Err err ->
+            Task.fail <| Http.BadUrl err
