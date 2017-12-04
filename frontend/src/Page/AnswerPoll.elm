@@ -9,7 +9,6 @@ module Page.AnswerPoll
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
 import Data.Poll exposing (PollId, Poll)
 import Data.Game exposing (GameId, Game)
 import Material
