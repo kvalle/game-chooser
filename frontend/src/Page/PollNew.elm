@@ -1,4 +1,4 @@
-module Page.NewPoll
+module Page.PollNew
     exposing
         ( Model
         , Msg(..)

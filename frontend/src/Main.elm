@@ -12,7 +12,7 @@ import Views
 import Page.Home
 import Page.User
 import Page.Poll
-import Page.NewPoll
+import Page.PollNew
 import Page.PollVote
 import Data.Environment
 
@@ -33,7 +33,7 @@ type Page
     | Home Page.Home.Model
     | User Page.User.Model
     | Poll Page.Poll.Model
-    | NewPoll Page.NewPoll.Model
+    | PollNew Page.PollNew.Model
     | AnswerPoll Page.PollVote.Model
     | Error String
 
@@ -110,15 +110,15 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        Messages.NewPollMsg subMsg ->
+        Messages.PollNewMsg subMsg ->
             case getPage model.pageState of
-                NewPoll subModel ->
+                PollNew subModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.NewPoll.update subMsg subModel
+                            Page.PollNew.update subMsg subModel
                     in
-                        ( { model | pageState = Loaded (NewPoll newModel) }
-                        , Cmd.map NewPollMsg newCmd
+                        ( { model | pageState = Loaded (PollNew newModel) }
+                        , Cmd.map PollNewMsg newCmd
                         )
 
                 _ ->
@@ -193,7 +193,7 @@ updateWithRoute route model =
                 )
 
             Route.PollNew pollId ->
-                ( { model | pageState = Loaded (NewPoll <| Page.NewPoll.init pollId) }
+                ( { model | pageState = Loaded (PollNew <| Page.PollNew.init pollId) }
                 , Cmd.none
                 )
 
@@ -228,8 +228,8 @@ view model =
             Page.Home.view homeModel model.appState HomeMsg Mdl
                 |> Views.frame model.appState
 
-        Loaded (NewPoll newPollModel) ->
-            Page.NewPoll.view newPollModel model.appState NewPollMsg Mdl
+        Loaded (PollNew newPollModel) ->
+            Page.PollNew.view newPollModel model.appState PollNewMsg Mdl
                 |> Views.frame model.appState
 
         Loaded (AnswerPoll newPollModel) ->
