@@ -27,8 +27,7 @@ import Views.Helper.KeyCode as KeyCode
 
 
 type Msg
-    = RedirectToPoll PollId
-    | SetSelection GameId Bool
+    = SetSelection GameId Bool
     | SubmitName String
     | UpdateName String
     | SubmitAnswer
@@ -100,9 +99,6 @@ init appState pollId =
 update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
 update msg appState model =
     case msg of
-        RedirectToPoll pollId ->
-            ( model, Route.newUrl <| Route.Poll pollId )
-
         SetSelection gameId state ->
             let
                 newPoll =
@@ -152,7 +148,7 @@ update msg appState model =
 
                 Ok () ->
                     ( model
-                    , Route.newUrl <| Route.Poll (model |> getPoll |> .id)
+                    , Route.newUrl <| Route.PollAnswers (model |> getPoll |> .id)
                     )
 
 

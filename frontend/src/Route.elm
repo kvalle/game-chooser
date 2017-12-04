@@ -16,9 +16,9 @@ import UrlParser as Url exposing ((</>), Parser, top, oneOf, parseHash, s, strin
 type Route
     = Home
     | User String
-    | NewPoll String
-    | AnswerPoll String
-    | Poll String
+    | PollNew String
+    | PollVote String
+    | PollAnswers String
     | Unknown
 
 
@@ -27,9 +27,9 @@ route =
     oneOf
         [ Url.map Home top
         , Url.map User (s "u" </> string)
-        , Url.map NewPoll (s "poll" </> string </> s "new")
-        , Url.map AnswerPoll (s "poll" </> string </> s "answer")
-        , Url.map Poll (s "poll" </> string)
+        , Url.map PollNew (s "poll" </> string </> s "new")
+        , Url.map PollAnswers (s "poll" </> string </> s "answers")
+        , Url.map PollVote (s "poll" </> string)
         ]
 
 
@@ -48,13 +48,13 @@ routeToString page =
                 User username ->
                     [ "u", username ]
 
-                NewPoll pollId ->
+                PollNew pollId ->
                     [ "poll", pollId, "new" ]
 
-                AnswerPoll pollId ->
-                    [ "poll", pollId, "answer" ]
+                PollAnswers pollId ->
+                    [ "poll", pollId, "answers" ]
 
-                Poll pollId ->
+                PollVote pollId ->
                     [ "poll", pollId ]
 
                 Unknown ->

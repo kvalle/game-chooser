@@ -18,8 +18,8 @@ import Data.AppState exposing (AppState)
 
 
 type Msg
-    = GoToPoll PollId
-    | GoToAnswerPoll PollId
+    = GoToPollAnswers PollId
+    | GoToPollVoting PollId
 
 
 type alias Model =
@@ -50,7 +50,7 @@ view model appState newPollMsg mdlMsg =
                 appState.mdl
                 [ Button.raised
                 , Options.cs "go-to-poll"
-                , Options.onClick <| newPollMsg (GoToPoll model)
+                , Options.onClick <| newPollMsg (GoToPollAnswers model)
                 ]
                 [ text "Go to poll" ]
             ]
@@ -59,8 +59,8 @@ view model appState newPollMsg mdlMsg =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GoToPoll pollId ->
-            ( model, Route.newUrl <| Poll pollId )
+        GoToPollAnswers pollId ->
+            ( model, Route.newUrl <| PollAnswers pollId )
 
-        GoToAnswerPoll pollId ->
-            ( model, Route.newUrl <| AnswerPoll pollId )
+        GoToPollVoting pollId ->
+            ( model, Route.newUrl <| PollVote pollId )

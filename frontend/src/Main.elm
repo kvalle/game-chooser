@@ -187,17 +187,17 @@ updateWithRoute route model =
                 , Cmd.none
                 )
 
-            Route.Poll pollId ->
+            Route.PollAnswers pollId ->
                 ( { model | pageState = Loaded (Poll <| Page.Poll.init pollId) }
                 , Cmd.none
                 )
 
-            Route.NewPoll pollId ->
+            Route.PollNew pollId ->
                 ( { model | pageState = Loaded (NewPoll <| Page.NewPoll.init pollId) }
                 , Cmd.none
                 )
 
-            Route.AnswerPoll pollId ->
+            Route.PollVote pollId ->
                 -- ( { model | pageState = Loaded (AnswerPoll <| Page.AnswerPoll.init pollId) }
                 -- , Cmd.none
                 -- )

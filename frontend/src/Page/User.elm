@@ -170,7 +170,7 @@ update msg appState model =
             case result of
                 Ok pollId ->
                     ( model
-                    , Route.newUrl (NewPoll pollId)
+                    , Route.newUrl (PollNew pollId)
                     )
 
                 Err error ->
