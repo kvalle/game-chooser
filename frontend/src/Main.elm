@@ -34,7 +34,7 @@ type Page
     | User Page.User.Model
     | PollNew Page.PollNew.Model
     | PollVote Page.PollVote.Model
-    | Poll Page.Poll.Model
+    | PollAnswers Page.Poll.Model
     | Error String
 
 
@@ -188,7 +188,7 @@ updateWithRoute route model =
                 )
 
             Route.PollAnswers pollId ->
-                ( { model | pageState = Loaded (Poll <| Page.Poll.init pollId) }
+                ( { model | pageState = Loaded (PollAnswers <| Page.Poll.init pollId) }
                 , Cmd.none
                 )
 
@@ -236,7 +236,7 @@ view model =
             Page.PollVote.view newPollModel model.appState PollVoteMsg Mdl
                 |> Views.frame model.appState
 
-        Loaded (Poll pollModel) ->
+        Loaded (PollAnswers pollModel) ->
             Page.Poll.view pollModel model.appState Mdl
                 |> Views.frame model.appState
 
