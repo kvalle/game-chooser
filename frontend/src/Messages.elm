@@ -5,7 +5,7 @@ import Route
 import Page.User
 import Page.Home
 import Page.NewPoll
-import Page.AnswerPoll
+import Page.PollVote
 import Http
 
 
@@ -17,8 +17,8 @@ type Msg
     | HomeMsg Page.Home.Msg
     | UserMsg Page.User.Msg
     | NewPollMsg Page.NewPoll.Msg
-    | AnswerPollMsg Page.AnswerPoll.Msg
+    | AnswerPollMsg Page.PollVote.Msg
       -- Routing between pages
     | SetRoute Route.Route
     | UserPageLoaded (Result Http.Error Page.User.Model)
-    | AnswerPollPageLoaded (Result Http.Error Page.AnswerPoll.Model)
+    | PollVotePageLoaded (Result Http.Error Page.PollVote.Model)

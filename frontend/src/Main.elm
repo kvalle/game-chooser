@@ -13,7 +13,7 @@ import Page.Home
 import Page.User
 import Page.Poll
 import Page.NewPoll
-import Page.AnswerPoll
+import Page.PollVote
 import Data.Environment
 
 
@@ -34,7 +34,7 @@ type Page
     | User Page.User.Model
     | Poll Page.Poll.Model
     | NewPoll Page.NewPoll.Model
-    | AnswerPoll Page.AnswerPoll.Model
+    | AnswerPoll Page.PollVote.Model
     | Error String
 
 
@@ -130,7 +130,7 @@ update msg model =
                 AnswerPoll subModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.AnswerPoll.update subMsg model.appState subModel
+                            Page.PollVote.update subMsg model.appState subModel
                     in
                         ( { model | pageState = Loaded (AnswerPoll newModel) }
                         , Cmd.map AnswerPollMsg newCmd
@@ -152,7 +152,7 @@ update msg model =
                     , Cmd.none
                     )
 
-        Messages.AnswerPollPageLoaded result ->
+        Messages.PollVotePageLoaded result ->
             case result of
                 Ok subModel ->
                     ( { model | pageState = Loaded (AnswerPoll subModel) }
@@ -198,7 +198,7 @@ updateWithRoute route model =
                 )
 
             Route.PollVote pollId ->
-                transition AnswerPollPageLoaded (Page.AnswerPoll.init model.appState pollId)
+                transition PollVotePageLoaded (Page.PollVote.init model.appState pollId)
 
             Route.User name ->
                 transition UserPageLoaded (Page.User.init model.appState name)
@@ -233,7 +233,7 @@ view model =
                 |> Views.frame model.appState
 
         Loaded (AnswerPoll newPollModel) ->
-            Page.AnswerPoll.view newPollModel model.appState AnswerPollMsg Mdl
+            Page.PollVote.view newPollModel model.appState AnswerPollMsg Mdl
                 |> Views.frame model.appState
 
         Loaded (Poll pollModel) ->
