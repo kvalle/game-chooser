@@ -11,9 +11,9 @@ import Html exposing (..)
 import Views
 import Page.Home
 import Page.User
-import Page.Poll
 import Page.PollNew
 import Page.PollVote
+import Page.PollAnswers
 import Data.Environment
 
 
@@ -34,7 +34,7 @@ type Page
     | User Page.User.Model
     | PollNew Page.PollNew.Model
     | PollVote Page.PollVote.Model
-    | PollAnswers Page.Poll.Model
+    | PollAnswers Page.PollAnswers.Model
     | Error String
 
 
@@ -188,7 +188,7 @@ updateWithRoute route model =
                 )
 
             Route.PollAnswers pollId ->
-                ( { model | pageState = Loaded (PollAnswers <| Page.Poll.init pollId) }
+                ( { model | pageState = Loaded (PollAnswers <| Page.PollAnswers.init pollId) }
                 , Cmd.none
                 )
 
@@ -237,7 +237,7 @@ view model =
                 |> Views.frame model.appState
 
         Loaded (PollAnswers pollModel) ->
-            Page.Poll.view pollModel model.appState Mdl
+            Page.PollAnswers.view pollModel model.appState Mdl
                 |> Views.frame model.appState
 
         Loaded (User userModel) ->

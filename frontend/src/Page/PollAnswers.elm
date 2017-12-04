@@ -1,4 +1,4 @@
-module Page.Poll
+module Page.PollAnswers
     exposing
         ( Model
         , Msg(..)
