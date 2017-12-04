@@ -198,9 +198,6 @@ updateWithRoute route model =
                 )
 
             Route.PollVote pollId ->
-                -- ( { model | pageState = Loaded (AnswerPoll <| Page.AnswerPoll.init pollId) }
-                -- , Cmd.none
-                -- )
                 transition AnswerPollPageLoaded (Page.AnswerPoll.init model.appState pollId)
 
             Route.User name ->
