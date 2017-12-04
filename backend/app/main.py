@@ -70,11 +70,11 @@ def get_poll(poll_id):
 @application.route("/poll/<poll_id>/vote", methods=['POST'])
 @cross_origin(headers=['Content-Type', 'Accept'])
 def vote_poll(poll_id):
-    game_ids = request.get_json()
-    if game_ids is None:
+    vote = request.get_json()
+    if vote is None:
         return bad_request()
 
-    firebase.vote_poll(poll_id, "player one", game_ids)
+    firebase.vote_poll(poll_id, vote["name"], vote["game_ids"])
 
     return Response(response="", status=200, mimetype="text/plain")
 

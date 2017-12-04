@@ -138,7 +138,7 @@ update msg appState model =
 
                     AskGames poll name voteState ->
                         ( AskGames poll name Saving
-                        , Backend.Poll.vote appState.environment poll.id selectedGameIds
+                        , Backend.Poll.vote appState.environment poll.id name selectedGameIds
                             |> Task.attempt AnswerSubmitted
                         )
 
