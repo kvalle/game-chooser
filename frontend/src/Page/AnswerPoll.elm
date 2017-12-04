@@ -15,6 +15,7 @@ import Data.Game exposing (GameId, Game)
 import Material
 import Material.Options as Options
 import Material.Button as Button
+import Material.Textfield as Textfield
 import Backend.Poll
 import Route
 import Data.AppState exposing (AppState)
@@ -23,6 +24,7 @@ import Http
 import Utils exposing ((<<<))
 import Dict
 import Views.GameCard
+import Views.Helper.KeyCode as KeyCode
 
 
 type Msg
@@ -167,23 +169,31 @@ view model appState answerPollMsg mdlMsg =
 
 viewNameForm : String -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
 viewNameForm name appState answerPollMsg mdlMsg =
-    div []
-        [ input
-            [ placeholder "What is your name?"
-            , type_ "text"
-            , value name
-            , onInput (answerPollMsg << UpdateName)
+    div [ class "fill-screen center-content" ]
+        [ Textfield.render mdlMsg
+            [ 0 ]
+            appState.mdl
+            [ Textfield.label "What is your name?"
+            , Textfield.floatingLabel
+            , Textfield.text_
+            , Textfield.value name
+            , Options.onInput (answerPollMsg << UpdateName)
+            , Options.on "keydown"
+                (KeyCode.decoderFor KeyCode.enter <|
+                    answerPollMsg <|
+                        SubmitName name
+                )
             ]
             []
         , Button.render mdlMsg
-            [ 0 ]
+            [ 1 ]
             appState.mdl
             [ Button.raised
             , Button.colored
-            , Button.disabled |> Options.when (String.isEmpty name)
             , Options.onClick (answerPollMsg <| SubmitName name)
+            , Button.disabled |> Options.when (name == "")
             ]
-            [ text "Set name" ]
+            [ text "Submit" ]
         ]
 
 

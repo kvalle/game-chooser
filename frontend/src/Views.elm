@@ -13,5 +13,5 @@ frame appState content =
 
 loading : Html msg
 loading =
-    div [ class "loader-wrapper" ]
+    div [ class "fill-screen center-content" ]
         [ Material.Progress.indeterminate ]

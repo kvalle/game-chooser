@@ -15,8 +15,7 @@ import Material.Textfield as Textfield
 import Material.Options as Options
 import Material
 import Material.Button as Button
-import Json.Decode
-import Json.Decode
+import Views.Helper.KeyCode as KeyCode
 
 
 type Msg
@@ -35,7 +34,7 @@ init =
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
 view model appState homeMsg mdlMsg =
-    div [ class "home-wrapper" ]
+    div [ class "fill-screen center-content" ]
         [ Textfield.render mdlMsg
             [ 0 ]
             appState.mdl
@@ -44,7 +43,7 @@ view model appState homeMsg mdlMsg =
             , Textfield.text_
             , Textfield.value model.username
             , Options.onInput (homeMsg << Edit)
-            , Options.on "keydown" (keyCodeDecoder keys.enter <| homeMsg Submit)
+            , Options.on "keydown" (KeyCode.decoderFor KeyCode.enter <| homeMsg Submit)
             ]
             []
         , Button.render mdlMsg
@@ -67,36 +66,3 @@ update msg appState model =
 
         Submit ->
             ( model, Route.newUrl (User model.username) )
-
-
-keyCodeDecoder : Int -> msg -> Json.Decode.Decoder msg
-keyCodeDecoder keyCode msg =
-    let
-        checkKey actualCode =
-            if actualCode == keyCode then
-                Json.Decode.succeed msg
-            else
-                Json.Decode.fail "Wrong key"
-    in
-        Json.Decode.field "keyCode" Json.Decode.int
-            |> Json.Decode.andThen checkKey
-
-
-keys :
-    { arrowDown : Int
-    , arrowUp : Int
-    , enter : Int
-    , escape : Int
-    , questionMark : Int
-    , tab : Int
-    , a : Int
-    }
-keys =
-    { arrowDown = 40
-    , arrowUp = 38
-    , enter = 13
-    , questionMark = 191
-    , escape = 27
-    , tab = 8
-    , a = 65
-    }
