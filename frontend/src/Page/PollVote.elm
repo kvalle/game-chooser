@@ -27,11 +27,11 @@ import Views.Helper.KeyCode as KeyCode
 
 
 type Msg
-    = SetSelection GameId Bool
+    = UpdateName String
     | SubmitName String
-    | UpdateName String
-    | SubmitAnswer
-    | AnswerSubmitted (Result Http.Error ())
+    | SetGameSelection GameId Bool
+    | SubmitVotes
+    | VotesSubmitted (Result Http.Error ())
 
 
 type VoteState
@@ -99,7 +99,7 @@ init appState pollId =
 update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
 update msg appState model =
     case msg of
-        SetSelection gameId state ->
+        SetGameSelection gameId state ->
             let
                 newPoll =
                     model |> getPoll |> Data.Poll.setGame (Data.Game.setSelection state) gameId
@@ -118,7 +118,7 @@ update msg appState model =
             , Cmd.none
             )
 
-        SubmitAnswer ->
+        SubmitVotes ->
             let
                 selectedGameIds =
                     model
@@ -136,10 +136,10 @@ update msg appState model =
                     AskGames poll name voteState ->
                         ( AskGames poll name Saving
                         , Backend.Poll.vote appState.environment poll.id name selectedGameIds
-                            |> Task.attempt AnswerSubmitted
+                            |> Task.attempt VotesSubmitted
                         )
 
-        AnswerSubmitted result ->
+        VotesSubmitted result ->
             case result of
                 Err err ->
                     ( model |> setVoteState Failed
@@ -199,10 +199,10 @@ viewGames poll voteState appState msgWrapper mdlMsg =
         , span [] <|
             case voteState of
                 Selecting ->
-                    [ submitButton (Dict.values poll.games) (msgWrapper SubmitAnswer) mdlMsg appState.mdl ]
+                    [ submitButton (Dict.values poll.games) (msgWrapper SubmitVotes) mdlMsg appState.mdl ]
 
                 Failed ->
-                    [ submitButton (Dict.values poll.games) (msgWrapper SubmitAnswer) mdlMsg appState.mdl
+                    [ submitButton (Dict.values poll.games) (msgWrapper SubmitVotes) mdlMsg appState.mdl
                     , span [] [ text "Submitting answers failed :( Please try again…" ]
                     ]
 
@@ -215,7 +215,7 @@ viewGames poll voteState appState msgWrapper mdlMsg =
                     ]
         , div [ class "game-cards" ] <|
             Views.GameCard.cards
-                (msgWrapper <<< SetSelection)
+                (msgWrapper <<< SetGameSelection)
                 mdlMsg
                 appState.mdl
                 (Dict.values poll.games)
