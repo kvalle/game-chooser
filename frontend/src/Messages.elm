@@ -17,7 +17,7 @@ type Msg
     | HomeMsg Page.Home.Msg
     | UserMsg Page.User.Msg
     | PollNewMsg Page.PollNew.Msg
-    | AnswerPollMsg Page.PollVote.Msg
+    | PollVoteMsg Page.PollVote.Msg
       -- Routing between pages
     | SetRoute Route.Route
     | UserPageLoaded (Result Http.Error Page.User.Model)

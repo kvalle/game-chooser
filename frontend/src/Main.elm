@@ -125,7 +125,7 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        Messages.AnswerPollMsg subMsg ->
+        Messages.PollVoteMsg subMsg ->
             case getPage model.pageState of
                 AnswerPoll subModel ->
                     let
@@ -133,7 +133,7 @@ update msg model =
                             Page.PollVote.update subMsg model.appState subModel
                     in
                         ( { model | pageState = Loaded (AnswerPoll newModel) }
-                        , Cmd.map AnswerPollMsg newCmd
+                        , Cmd.map PollVoteMsg newCmd
                         )
 
                 _ ->
@@ -233,7 +233,7 @@ view model =
                 |> Views.frame model.appState
 
         Loaded (AnswerPoll newPollModel) ->
-            Page.PollVote.view newPollModel model.appState AnswerPollMsg Mdl
+            Page.PollVote.view newPollModel model.appState PollVoteMsg Mdl
                 |> Views.frame model.appState
 
         Loaded (Poll pollModel) ->
