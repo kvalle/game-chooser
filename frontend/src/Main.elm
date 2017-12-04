@@ -32,9 +32,9 @@ type Page
     = Blank
     | Home Page.Home.Model
     | User Page.User.Model
-    | Poll Page.Poll.Model
     | PollNew Page.PollNew.Model
-    | AnswerPoll Page.PollVote.Model
+    | PollVote Page.PollVote.Model
+    | Poll Page.Poll.Model
     | Error String
 
 
@@ -127,12 +127,12 @@ update msg model =
 
         Messages.PollVoteMsg subMsg ->
             case getPage model.pageState of
-                AnswerPoll subModel ->
+                PollVote subModel ->
                     let
                         ( newModel, newCmd ) =
                             Page.PollVote.update subMsg model.appState subModel
                     in
-                        ( { model | pageState = Loaded (AnswerPoll newModel) }
+                        ( { model | pageState = Loaded (PollVote newModel) }
                         , Cmd.map PollVoteMsg newCmd
                         )
 
@@ -155,7 +155,7 @@ update msg model =
         Messages.PollVotePageLoaded result ->
             case result of
                 Ok subModel ->
-                    ( { model | pageState = Loaded (AnswerPoll subModel) }
+                    ( { model | pageState = Loaded (PollVote subModel) }
                     , Cmd.none
                     )
 
@@ -232,7 +232,7 @@ view model =
             Page.PollNew.view newPollModel model.appState PollNewMsg Mdl
                 |> Views.frame model.appState
 
-        Loaded (AnswerPoll newPollModel) ->
+        Loaded (PollVote newPollModel) ->
             Page.PollVote.view newPollModel model.appState PollVoteMsg Mdl
                 |> Views.frame model.appState
 
