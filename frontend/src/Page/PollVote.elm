@@ -153,17 +153,17 @@ update msg appState model =
 
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
-view model appState answerPollMsg mdlMsg =
+view model appState msgWrapper mdlMsg =
     case model of
         AskName poll name ->
-            viewNameForm name appState answerPollMsg mdlMsg
+            viewNameForm name appState msgWrapper mdlMsg
 
         AskGames poll name voteState ->
-            viewGames poll voteState appState answerPollMsg mdlMsg
+            viewGames poll voteState appState msgWrapper mdlMsg
 
 
 viewNameForm : String -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
-viewNameForm name appState answerPollMsg mdlMsg =
+viewNameForm name appState msgWrapper mdlMsg =
     div [ class "fill-screen center-content" ]
         [ Textfield.render mdlMsg
             [ 0 ]
@@ -172,10 +172,10 @@ viewNameForm name appState answerPollMsg mdlMsg =
             , Textfield.floatingLabel
             , Textfield.text_
             , Textfield.value name
-            , Options.onInput (answerPollMsg << UpdateName)
+            , Options.onInput (msgWrapper << UpdateName)
             , Options.on "keydown"
                 (KeyCode.decoderFor KeyCode.enter <|
-                    answerPollMsg <|
+                    msgWrapper <|
                         SubmitName name
                 )
             ]
@@ -185,7 +185,7 @@ viewNameForm name appState answerPollMsg mdlMsg =
             appState.mdl
             [ Button.raised
             , Button.colored
-            , Options.onClick (answerPollMsg <| SubmitName name)
+            , Options.onClick (msgWrapper <| SubmitName name)
             , Button.disabled |> Options.when (name == "")
             ]
             [ text "Submit" ]
@@ -193,16 +193,16 @@ viewNameForm name appState answerPollMsg mdlMsg =
 
 
 viewGames : Poll -> VoteState -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
-viewGames poll voteState appState answerPollMsg mdlMsg =
+viewGames poll voteState appState msgWrapper mdlMsg =
     div [ class "answer-poll-wrapper" ]
         [ h3 [] [ text <| "Which games do you want to play?" ]
         , span [] <|
             case voteState of
                 Selecting ->
-                    [ submitButton (Dict.values poll.games) (answerPollMsg SubmitAnswer) mdlMsg appState.mdl ]
+                    [ submitButton (Dict.values poll.games) (msgWrapper SubmitAnswer) mdlMsg appState.mdl ]
 
                 Failed ->
-                    [ submitButton (Dict.values poll.games) (answerPollMsg SubmitAnswer) mdlMsg appState.mdl
+                    [ submitButton (Dict.values poll.games) (msgWrapper SubmitAnswer) mdlMsg appState.mdl
                     , span [] [ text "Submitting answers failed :( Please try again…" ]
                     ]
 
@@ -215,7 +215,7 @@ viewGames poll voteState appState answerPollMsg mdlMsg =
                     ]
         , div [ class "game-cards" ] <|
             Views.GameCard.cards
-                (answerPollMsg <<< SetSelection)
+                (msgWrapper <<< SetSelection)
                 mdlMsg
                 appState.mdl
                 (Dict.values poll.games)

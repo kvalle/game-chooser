@@ -32,7 +32,7 @@ init pollId =
 
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
-view model appState newPollMsg mdlMsg =
+view model appState msgWrapper mdlMsg =
     let
         relativeUrl =
             "#/poll/" ++ model ++ "/answer"
@@ -50,7 +50,7 @@ view model appState newPollMsg mdlMsg =
                 appState.mdl
                 [ Button.raised
                 , Options.cs "go-to-poll"
-                , Options.onClick <| newPollMsg (GoToPollAnswers model)
+                , Options.onClick <| msgWrapper (GoToPollAnswers model)
                 ]
                 [ text "Go to poll" ]
             ]

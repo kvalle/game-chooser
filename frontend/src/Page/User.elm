@@ -53,7 +53,7 @@ init appState name =
 
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
-view model appState userMsg mdlMsg =
+view model appState msgWrapper mdlMsg =
     div [ class "user-wrapper" ]
         [ h2 []
             [ text <|
@@ -69,15 +69,15 @@ view model appState userMsg mdlMsg =
         , h4 []
             [ text <| toString (List.length model.games) ++ " games "
             , text <| "(" ++ toString (model.games |> List.filter .selected |> List.length) ++ " selected)"
-            , selectAllButton model.games (userMsg SelectAll) mdlMsg appState.mdl
-            , deselectAllButton model.games (userMsg DeselectAll) mdlMsg appState.mdl
+            , selectAllButton model.games (msgWrapper SelectAll) mdlMsg appState.mdl
+            , deselectAllButton model.games (msgWrapper DeselectAll) mdlMsg appState.mdl
             , div [] <|
                 case model.state of
                     Selecting ->
-                        [ createPollButton model userMsg mdlMsg appState.mdl ]
+                        [ createPollButton model msgWrapper mdlMsg appState.mdl ]
 
                     Failed ->
-                        [ createPollButton model userMsg mdlMsg appState.mdl
+                        [ createPollButton model msgWrapper mdlMsg appState.mdl
                         , span [] [ text "Creating poll failed :( Please try again…" ]
                         ]
 
@@ -91,7 +91,7 @@ view model appState userMsg mdlMsg =
             ]
         , div [ class "game-cards" ] <|
             Views.GameCard.cards
-                (userMsg <<< SetSelection)
+                (msgWrapper <<< SetSelection)
                 mdlMsg
                 appState.mdl
                 model.games
@@ -123,14 +123,14 @@ deselectAllButton games msg mdlMsg mdlModel =
 
 
 createPollButton : Model -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Material.Model -> Html msg
-createPollButton model userMsg mdlMsg mdlModel =
+createPollButton model msgWrapper mdlMsg mdlModel =
     Button.render mdlMsg
         [ 0 ]
         mdlModel
         [ Button.raised
         , Button.colored
         , Button.disabled |> Options.when (List.all (not << .selected) model.games)
-        , Options.onClick (userMsg CreatePoll)
+        , Options.onClick (msgWrapper CreatePoll)
         ]
         [ text "Create poll" ]
 
