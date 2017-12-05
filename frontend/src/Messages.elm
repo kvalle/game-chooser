@@ -6,6 +6,7 @@ import Page.User
 import Page.Home
 import Page.PollNew
 import Page.PollVote
+import Page.PollAnswers
 import Http
 
 
@@ -22,3 +23,4 @@ type Msg
     | SetRoute Route.Route
     | UserPageLoaded (Result Http.Error Page.User.Model)
     | PollVotePageLoaded (Result Http.Error Page.PollVote.Model)
+    | PollAnswersPageLoaded (Result Http.Error Page.PollAnswers.Model)

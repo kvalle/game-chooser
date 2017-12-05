@@ -168,6 +168,22 @@ update msg model =
                         , Cmd.none
                         )
 
+        Messages.PollAnswersPageLoaded result ->
+            case result of
+                Ok subModel ->
+                    ( { model | pageState = Loaded (PollAnswers subModel) }
+                    , Cmd.none
+                    )
+
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "ERR" error
+                    in
+                        ( { model | pageState = Loaded (Error "Failed to load poll") }
+                        , Cmd.none
+                        )
+
 
 {-| Helper function for update. Given a Route and a Model, either load the right
 page directly, or set transition state and initialise loading of data for the
@@ -188,9 +204,7 @@ updateWithRoute route model =
                 )
 
             Route.PollAnswers pollId ->
-                ( { model | pageState = Loaded (PollAnswers <| Page.PollAnswers.init pollId) }
-                , Cmd.none
-                )
+                transition PollAnswersPageLoaded <| Page.PollAnswers.init model.appState pollId
 
             Route.PollNew pollId ->
                 ( { model | pageState = Loaded (PollNew <| Page.PollNew.init pollId) }
