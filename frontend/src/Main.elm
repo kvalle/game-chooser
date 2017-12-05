@@ -9,7 +9,7 @@ import Data.AppState exposing (AppState)
 import Task
 import Html exposing (..)
 import Views
-import Page exposing (Page(..))
+import Page exposing (Page(..), PageState(..))
 import Page.Home
 import Page.User
 import Page.PollNew
@@ -22,11 +22,6 @@ type alias Model =
     { appState : AppState
     , pageState : PageState
     }
-
-
-type PageState
-    = Loaded Page
-    | TransitioningFrom Page
 
 
 main : Program Never Model Msg
@@ -71,8 +66,20 @@ update msg model =
         SetRoute route ->
             updateWithRoute route model
 
+        PageLoaded result ->
+            case result of
+                Ok page ->
+                    ( { model | pageState = Loaded page }
+                    , Cmd.none
+                    )
+
+                Err error ->
+                    ( { model | pageState = Loaded (Error "Failed to load poll") }
+                    , Cmd.none
+                    )
+
         HomeMsg subMsg ->
-            case getPage model.pageState of
+            case Page.getPage model.pageState of
                 Page.Home subModel ->
                     let
                         ( newModel, newCmd ) =
@@ -87,7 +94,7 @@ update msg model =
                     ( model, Cmd.none )
 
         UserMsg subMsg ->
-            case getPage model.pageState of
+            case Page.getPage model.pageState of
                 Page.User subModel ->
                     let
                         ( newModel, newCmd ) =
@@ -102,7 +109,7 @@ update msg model =
                     ( model, Cmd.none )
 
         PollNewMsg subMsg ->
-            case getPage model.pageState of
+            case Page.getPage model.pageState of
                 Page.PollNew subModel ->
                     let
                         ( newModel, newCmd ) =
@@ -117,7 +124,7 @@ update msg model =
                     ( model, Cmd.none )
 
         PollVoteMsg subMsg ->
-            case getPage model.pageState of
+            case Page.getPage model.pageState of
                 Page.PollVote subModel ->
                     let
                         ( newModel, newCmd ) =
@@ -131,18 +138,6 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        PageLoaded result ->
-            case result of
-                Ok page ->
-                    ( { model | pageState = Loaded page }
-                    , Cmd.none
-                    )
-
-                Err error ->
-                    ( { model | pageState = Loaded (Error "Failed to load poll") }
-                    , Cmd.none
-                    )
-
 
 {-| Helper function for update. Given a Route and a Model, either load the right
 page directly, or set transition state and initialise loading of data for the
@@ -152,7 +147,7 @@ updateWithRoute : Route -> Model -> ( Model, Cmd Msg )
 updateWithRoute route model =
     let
         transition page initTask =
-            ( { model | pageState = TransitioningFrom (getPage model.pageState) }
+            ( { model | pageState = TransitioningFrom (Page.getPage model.pageState) }
             , initTask
                 |> Task.map page
                 |> Task.attempt PageLoaded
@@ -218,13 +213,3 @@ view model =
         Loaded (Page.User userModel) ->
             Page.User.view userModel model.appState UserMsg Mdl
                 |> Views.frame model.appState
-
-
-getPage : PageState -> Page
-getPage pageState =
-    case pageState of
-        Loaded page ->
-            page
-
-        TransitioningFrom page ->
-            page

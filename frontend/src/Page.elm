@@ -1,4 +1,4 @@
-module Page exposing (Page(..))
+module Page exposing (Page(..), PageState(..), getPage)
 
 import Page.Home
 import Page.User
@@ -15,3 +15,18 @@ type Page
     | PollVote Page.PollVote.Model
     | PollAnswers Page.PollAnswers.Model
     | Error String
+
+
+type PageState
+    = Loaded Page
+    | TransitioningFrom Page
+
+
+getPage : PageState -> Page
+getPage pageState =
+    case pageState of
+        Loaded page ->
+            page
+
+        TransitioningFrom page ->
+            page
