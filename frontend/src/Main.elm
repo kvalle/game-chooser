@@ -71,7 +71,7 @@ update msg model =
         SetRoute route ->
             updateWithRoute route model
 
-        Messages.HomeMsg subMsg ->
+        HomeMsg subMsg ->
             case getPage model.pageState of
                 Page.Home subModel ->
                     let
@@ -86,7 +86,7 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        Messages.UserMsg subMsg ->
+        UserMsg subMsg ->
             case getPage model.pageState of
                 Page.User subModel ->
                     let
@@ -101,7 +101,7 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        Messages.PollNewMsg subMsg ->
+        PollNewMsg subMsg ->
             case getPage model.pageState of
                 Page.PollNew subModel ->
                     let
@@ -116,7 +116,7 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        Messages.PollVoteMsg subMsg ->
+        PollVoteMsg subMsg ->
             case getPage model.pageState of
                 Page.PollVote subModel ->
                     let
@@ -131,15 +131,17 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        Messages.PageLoaded (Ok page) ->
-            ( { model | pageState = Loaded page }
-            , Cmd.none
-            )
+        PageLoaded result ->
+            case result of
+                Ok page ->
+                    ( { model | pageState = Loaded page }
+                    , Cmd.none
+                    )
 
-        Messages.PageLoaded (Err error) ->
-            ( { model | pageState = Loaded (Error "Failed to load poll") }
-            , Cmd.none
-            )
+                Err error ->
+                    ( { model | pageState = Loaded (Error "Failed to load poll") }
+                    , Cmd.none
+                    )
 
 
 {-| Helper function for update. Given a Route and a Model, either load the right
