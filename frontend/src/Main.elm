@@ -9,6 +9,7 @@ import Data.AppState exposing (AppState)
 import Task
 import Html exposing (..)
 import Views
+import Page exposing (Page(..))
 import Page.Home
 import Page.User
 import Page.PollNew
@@ -26,16 +27,6 @@ type alias Model =
 type PageState
     = Loaded Page
     | TransitioningFrom Page
-
-
-type Page
-    = Blank
-    | Home Page.Home.Model
-    | User Page.User.Model
-    | PollNew Page.PollNew.Model
-    | PollVote Page.PollVote.Model
-    | PollAnswers Page.PollAnswers.Model
-    | Error String
 
 
 main : Program Never Model Msg
@@ -82,12 +73,12 @@ update msg model =
 
         Messages.HomeMsg subMsg ->
             case getPage model.pageState of
-                Home subModel ->
+                Page.Home subModel ->
                     let
                         ( newModel, newCmd ) =
                             Page.Home.update subMsg model.appState subModel
                     in
-                        ( { model | pageState = Loaded (Home newModel) }
+                        ( { model | pageState = Loaded (Page.Home newModel) }
                         , Cmd.map HomeMsg newCmd
                         )
 
@@ -97,12 +88,12 @@ update msg model =
 
         Messages.UserMsg subMsg ->
             case getPage model.pageState of
-                User subModel ->
+                Page.User subModel ->
                     let
                         ( newModel, newCmd ) =
                             Page.User.update subMsg model.appState subModel
                     in
-                        ( { model | pageState = Loaded (User newModel) }
+                        ( { model | pageState = Loaded (Page.User newModel) }
                         , Cmd.map UserMsg newCmd
                         )
 
@@ -112,12 +103,12 @@ update msg model =
 
         Messages.PollNewMsg subMsg ->
             case getPage model.pageState of
-                PollNew subModel ->
+                Page.PollNew subModel ->
                     let
                         ( newModel, newCmd ) =
                             Page.PollNew.update subMsg subModel
                     in
-                        ( { model | pageState = Loaded (PollNew newModel) }
+                        ( { model | pageState = Loaded (Page.PollNew newModel) }
                         , Cmd.map PollNewMsg newCmd
                         )
 
@@ -127,12 +118,12 @@ update msg model =
 
         Messages.PollVoteMsg subMsg ->
             case getPage model.pageState of
-                PollVote subModel ->
+                Page.PollVote subModel ->
                     let
                         ( newModel, newCmd ) =
                             Page.PollVote.update subMsg model.appState subModel
                     in
-                        ( { model | pageState = Loaded (PollVote newModel) }
+                        ( { model | pageState = Loaded (Page.PollVote newModel) }
                         , Cmd.map PollVoteMsg newCmd
                         )
 
@@ -140,49 +131,15 @@ update msg model =
                     -- Disregard messages when on other pages
                     ( model, Cmd.none )
 
-        Messages.UserPageLoaded result ->
-            case result of
-                Ok subModel ->
-                    ( { model | pageState = Loaded (User subModel) }
-                    , Cmd.none
-                    )
+        Messages.PageLoaded (Ok page) ->
+            ( { model | pageState = Loaded page }
+            , Cmd.none
+            )
 
-                Err error ->
-                    ( { model | pageState = Loaded (Error "Unable to load user info") }
-                    , Cmd.none
-                    )
-
-        Messages.PollVotePageLoaded result ->
-            case result of
-                Ok subModel ->
-                    ( { model | pageState = Loaded (PollVote subModel) }
-                    , Cmd.none
-                    )
-
-                Err error ->
-                    let
-                        _ =
-                            Debug.log "ERR" error
-                    in
-                        ( { model | pageState = Loaded (Error "Failed to load poll") }
-                        , Cmd.none
-                        )
-
-        Messages.PollAnswersPageLoaded result ->
-            case result of
-                Ok subModel ->
-                    ( { model | pageState = Loaded (PollAnswers subModel) }
-                    , Cmd.none
-                    )
-
-                Err error ->
-                    let
-                        _ =
-                            Debug.log "ERR" error
-                    in
-                        ( { model | pageState = Loaded (Error "Failed to load poll") }
-                        , Cmd.none
-                        )
+        Messages.PageLoaded (Err error) ->
+            ( { model | pageState = Loaded (Error "Failed to load poll") }
+            , Cmd.none
+            )
 
 
 {-| Helper function for update. Given a Route and a Model, either load the right
@@ -192,30 +149,32 @@ new page.
 updateWithRoute : Route -> Model -> ( Model, Cmd Msg )
 updateWithRoute route model =
     let
-        transition toMsg task =
+        transition page initTask =
             ( { model | pageState = TransitioningFrom (getPage model.pageState) }
-            , Task.attempt toMsg task
+            , initTask
+                |> Task.map page
+                |> Task.attempt PageLoaded
             )
     in
         case route of
             Route.Home ->
-                ( { model | pageState = Loaded (Home Page.Home.init) }
+                ( { model | pageState = Loaded (Page.Home Page.Home.init) }
                 , Cmd.none
                 )
 
             Route.PollAnswers pollId ->
-                transition PollAnswersPageLoaded <| Page.PollAnswers.init model.appState pollId
+                transition Page.PollAnswers <| Page.PollAnswers.init model.appState pollId
 
             Route.PollNew pollId ->
-                ( { model | pageState = Loaded (PollNew <| Page.PollNew.init pollId) }
+                ( { model | pageState = Loaded (Page.PollNew <| Page.PollNew.init pollId) }
                 , Cmd.none
                 )
 
             Route.PollVote pollId ->
-                transition PollVotePageLoaded (Page.PollVote.init model.appState pollId)
+                transition Page.PollVote <| Page.PollVote.init model.appState pollId
 
             Route.User name ->
-                transition UserPageLoaded (Page.User.init model.appState name)
+                transition Page.User <| Page.User.init model.appState name
 
             Route.Unknown ->
                 ( { model | pageState = Loaded (Error "404") }
@@ -238,23 +197,23 @@ view model =
             Html.text error
                 |> Views.frame model.appState
 
-        Loaded (Home homeModel) ->
+        Loaded (Page.Home homeModel) ->
             Page.Home.view homeModel model.appState HomeMsg Mdl
                 |> Views.frame model.appState
 
-        Loaded (PollNew newPollModel) ->
+        Loaded (Page.PollNew newPollModel) ->
             Page.PollNew.view newPollModel model.appState PollNewMsg Mdl
                 |> Views.frame model.appState
 
-        Loaded (PollVote newPollModel) ->
+        Loaded (Page.PollVote newPollModel) ->
             Page.PollVote.view newPollModel model.appState PollVoteMsg Mdl
                 |> Views.frame model.appState
 
-        Loaded (PollAnswers pollModel) ->
+        Loaded (Page.PollAnswers pollModel) ->
             Page.PollAnswers.view pollModel model.appState Mdl
                 |> Views.frame model.appState
 
-        Loaded (User userModel) ->
+        Loaded (Page.User userModel) ->
             Page.User.view userModel model.appState UserMsg Mdl
                 |> Views.frame model.appState
 
