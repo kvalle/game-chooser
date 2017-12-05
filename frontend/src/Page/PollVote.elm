@@ -90,7 +90,7 @@ setVoteState voteState model =
             AskGames poll name voteState
 
 
-init : AppState -> String -> Task Http.Error Model
+init : AppState -> PollId -> Task Http.Error Model
 init appState pollId =
     Task.map (flip AskName "") <|
         Backend.Poll.getById appState.environment pollId
