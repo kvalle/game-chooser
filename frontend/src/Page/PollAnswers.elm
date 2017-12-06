@@ -9,11 +9,14 @@ module Page.PollAnswers
 
 import Html exposing (..)
 import Data.Poll exposing (Poll, PollId)
+import Data.Game exposing (Game, GameId)
 import Material
+import Material.List as Lists
 import Data.AppState exposing (AppState)
 import Task exposing (Task)
 import Backend.Poll
 import Http
+import Dict exposing (Dict)
 
 
 type Msg
@@ -24,6 +27,10 @@ type alias Model =
     { poll : Poll }
 
 
+type alias Name =
+    String
+
+
 init : AppState -> PollId -> Task Http.Error Model
 init appState pollId =
     Task.map Model <|
@@ -32,7 +39,22 @@ init appState pollId =
 
 view : Model -> AppState -> (Material.Msg msg -> msg) -> Html msg
 view model appState mdlMsg =
-    text <| "Hello, I am poll " ++ model.poll.id
+    let
+        games =
+            Dict.values model.poll.games
+    in
+        Lists.ul [] <| List.map gameElement games
+
+
+gameElement : Game -> Html msg
+gameElement game =
+    Lists.li [ Lists.withSubtitle ]
+        [ Lists.content []
+            [ Lists.avatarImage game.thumbnail_url []
+            , text game.title
+            , Lists.subtitle [] [ text "n of 5 people voted this" ]
+            ]
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

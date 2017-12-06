@@ -74,9 +74,13 @@ update msg model =
                     )
 
                 Err error ->
-                    ( { model | pageState = Loaded (Error "Failed to load poll") }
-                    , Cmd.none
-                    )
+                    let
+                        _ =
+                            Debug.log "Page laod failed" error
+                    in
+                        ( { model | pageState = Loaded (Error "Failed to load poll") }
+                        , Cmd.none
+                        )
 
         HomeMsg subMsg ->
             case Page.getPage model.pageState of

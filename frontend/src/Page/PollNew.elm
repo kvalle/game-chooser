@@ -33,27 +33,23 @@ init pollId =
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
 view model appState msgWrapper mdlMsg =
-    let
-        relativeUrl =
-            "#/poll/" ++ model ++ "/answer"
-    in
-        div [ class "new-poll-wrapper" ]
-            [ h3 [] [ text <| "Poll created!" ]
-            , span [] [ text "Send this link to your friends: " ]
-            , a
-                [ class "new-poll-link"
-                , href relativeUrl
-                ]
-                [ text <| appState.hostname ++ relativeUrl ]
-            , Button.render mdlMsg
-                [ 0 ]
-                appState.mdl
-                [ Button.raised
-                , Options.cs "go-to-poll"
-                , Options.onClick <| msgWrapper (GoToPollAnswers model)
-                ]
-                [ text "Go to poll" ]
+    div [ class "new-poll-wrapper" ]
+        [ h3 [] [ text <| "Poll created!" ]
+        , span [] [ text "Send this link to your friends: " ]
+        , a
+            [ class "new-poll-link"
+            , href <| "#/poll/" ++ model
             ]
+            [ text <| appState.hostname ++ ("#/poll/" ++ model) ]
+        , Button.render mdlMsg
+            [ 0 ]
+            appState.mdl
+            [ Button.raised
+            , Options.cs "go-to-poll"
+            , Options.onClick <| msgWrapper (GoToPollAnswers model)
+            ]
+            [ text "Go to poll" ]
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
