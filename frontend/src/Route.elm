@@ -26,7 +26,7 @@ route : Parser (Route -> a) a
 route =
     oneOf
         [ Url.map Home top
-        , Url.map User (s "u" </> string)
+        , Url.map User (s "user" </> string)
         , Url.map PollNew (s "poll" </> string </> s "new")
         , Url.map PollAnswers (s "poll" </> string </> s "answers")
         , Url.map PollVote (s "poll" </> string)
@@ -46,7 +46,7 @@ routeToString page =
                     []
 
                 User username ->
-                    [ "u", username ]
+                    [ "user", username ]
 
                 PollNew pollId ->
                     [ "poll", pollId, "new" ]
