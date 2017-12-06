@@ -58,7 +58,10 @@ view model appState mdlMsg =
         games =
             selector model.poll
     in
-        Lists.ul [] <| List.map gameElement games
+        div []
+            [ h3 [] [ text <| "Poll results" ]
+            , Lists.ul [] <| List.map gameElement games
+            ]
 
 
 gameElement : ( Game, List Name ) -> Html msg
