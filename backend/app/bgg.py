@@ -13,7 +13,7 @@ def get_user(name):
 		"lastname": data["user"]["lastname"]["@value"]
 	}
 
-def get_games(user_name, max_retries=4):
+def get_games(user_name, max_retries=50):
 	url = 'https://www.boardgamegeek.com/xmlapi2/collection?username=' + user_name + '&own=1&excludesubtype=boardgameexpansion'
 
 	retries = 0
