@@ -19,6 +19,7 @@ def save_game(game_id, game):
 
 
 def save_games(games):
+	# FIXME: should add, not override
 	db.reference('games').set(games)
 
 

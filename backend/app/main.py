@@ -3,6 +3,7 @@
 import json
 import time
 import sys
+from collections import defaultdict
 
 from flask import Flask, request, jsonify, _app_ctx_stack, Response
 from flask_cors import cross_origin
@@ -56,11 +57,19 @@ def post_poll():
 def get_poll(poll_id):
     fb_poll = firebase.get_poll(poll_id)
 
+    votes = fb_poll["votes"] if "votes" in fb_poll else {}
+
+    voters = defaultdict(list)
+    for name in votes:
+        for game_id in votes[name]:
+            voters[game_id].append(name)
+
     poll = {
         "id": poll_id,
         "games": { game_id: firebase.get_game(game_id)
                     for game_id in fb_poll["game_ids"]},
-        "votes": fb_poll["votes"] if "votes" in fb_poll else {}
+        "votes": votes,
+        "voters": dict(voters)
     }
 
     json_data = json.dumps(poll)

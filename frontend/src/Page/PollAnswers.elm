@@ -17,8 +17,6 @@ import Task exposing (Task)
 import Backend.Poll
 import Http
 import Dict exposing (Dict)
-import Dict.Extra
-import List.Extra
 import Tuple
 
 
@@ -36,21 +34,8 @@ type alias Name =
 
 selector : Poll -> List ( Game, List Name )
 selector poll =
-    -- Turn the poll into a list of games, together with the list of people
-    -- that voted for that game.
-    Dict.toList poll.votes
-        |> List.concatMap (\( name, gameIds ) -> List.map (flip (,) name) gameIds)
-        |> List.Extra.groupWhile (\a b -> (Tuple.first a) == (Tuple.first b))
-        |> List.concat
-        |> List.sortBy Tuple.first
-        |> List.Extra.groupWhile (\a b -> (Tuple.first a) == (Tuple.first b))
-        |> List.filterMap
-            (\ls ->
-                (Maybe.map2 (,)
-                    (List.head ls |> Maybe.map Tuple.first)
-                    (Just <| List.map Tuple.second ls)
-                )
-            )
+    poll.voters
+        |> Dict.toList
         |> List.filterMap
             (\( id, votes ) ->
                 Maybe.map2 (,)
@@ -71,7 +56,6 @@ view : Model -> AppState -> (Material.Msg msg -> msg) -> Html msg
 view model appState mdlMsg =
     let
         games =
-            --Dict.values model.poll.games
             selector model.poll
     in
         Lists.ul [] <| List.map gameElement games
