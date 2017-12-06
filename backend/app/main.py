@@ -3,7 +3,6 @@
 import json
 import time
 import sys
-from collections import defaultdict
 
 from flask import Flask, request, jsonify, _app_ctx_stack, Response
 from flask_cors import cross_origin
@@ -59,7 +58,7 @@ def get_poll(poll_id):
 
     votes = fb_poll["votes"] if "votes" in fb_poll else {}
 
-    voters = defaultdict(list)
+    voters = {game_id: [] for game_id in fb_poll["game_ids"]}
     for name in votes:
         for game_id in votes[name]:
             voters[game_id].append(name)
