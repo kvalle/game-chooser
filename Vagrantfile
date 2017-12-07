@@ -17,4 +17,11 @@ Vagrant.configure("2") do |config|
 SCRIPT
   config.vm.network "forwarded_port", guest: 7777, host: 7777
   config.vm.synced_folder "", "/home/ubuntu/gamy"
+
+  config.vm.provider :virtualbox do |v|
+    # Set the timesync threshold to 10 seconds, instead of the default 20 minutes.
+    v.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000]
+    # Need more memory in order to install zappa
+    v.customize ["modifyvm", :id, "--memory", "2048"]
+  end
 end
