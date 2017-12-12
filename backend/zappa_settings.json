@@ -1,0 +1,20 @@
+{
+    "test": {
+    	  "project_name": "game-chooser",
+        "app_function": "app.main.application",
+        "apigateway_description": "Cellar backend API (test)",
+        "s3_bucket": "zappa-game-chooser-test",
+        "domain": "test.api.game.kjetilvalle.com",
+        "certificate_arn": "arn:aws:acm:us-east-1:017978203355:certificate/b635e754-a2f4-4436-985c-3045119a2bc9",
+        "aws_region": "eu-central-1"
+    },
+    "prod": {
+        "project_name": "game-chooser",
+        "app_function": "app.main.application",
+        "apigateway_description": "Cellar backend API (prod)",
+        "s3_bucket": "zappa-game-chooser-prod",
+        "domain": "api.game.kjetilvalle.com",
+        "certificate_arn": "arn:aws:acm:us-east-1:017978203355:certificate/b635e754-a2f4-4436-985c-3045119a2bc9",
+        "aws_region": "eu-central-1"
+    }
+}
