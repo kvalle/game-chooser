@@ -1,4 +1,4 @@
-module Page.Home
+module Page.Start
     exposing
         ( Model
         , Msg(..)
@@ -33,7 +33,7 @@ init =
 
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
-view model appState homeMsg mdlMsg =
+view model appState startMsg mdlMsg =
     div [ class "fill-screen center-content" ]
         [ Textfield.render mdlMsg
             [ 0 ]
@@ -42,8 +42,8 @@ view model appState homeMsg mdlMsg =
             , Textfield.floatingLabel
             , Textfield.text_
             , Textfield.value model
-            , Options.onInput (homeMsg << Edit)
-            , Options.on "keydown" (KeyCode.decoderFor KeyCode.enter <| homeMsg Submit)
+            , Options.onInput (startMsg << Edit)
+            , Options.on "keydown" (KeyCode.decoderFor KeyCode.enter <| startMsg Submit)
             ]
             []
         , Button.render mdlMsg
@@ -51,7 +51,7 @@ view model appState homeMsg mdlMsg =
             appState.mdl
             [ Button.raised
             , Button.ripple
-            , Options.onClick (homeMsg Submit)
+            , Options.onClick (startMsg Submit)
             , Button.disabled |> Options.when (model == "")
             ]
             [ text "Submit" ]

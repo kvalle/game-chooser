@@ -3,7 +3,7 @@ module Messages exposing (Msg(..))
 import Material
 import Route
 import Page.User
-import Page.Home
+import Page.Start
 import Page.PollNew
 import Page.PollVote
 import Http
@@ -15,7 +15,7 @@ type Msg
       -- Message wrapper for Material Design Lite
     | Mdl (Material.Msg Msg)
       -- Page messages
-    | HomeMsg Page.Home.Msg
+    | StartMsg Page.Start.Msg
     | UserMsg Page.User.Msg
     | PollNewMsg Page.PollNew.Msg
     | PollVoteMsg Page.PollVote.Msg

@@ -1,6 +1,6 @@
 module Page exposing (Page(..), PageState(..), getPage)
 
-import Page.Home
+import Page.Start
 import Page.User
 import Page.PollNew
 import Page.PollVote
@@ -9,7 +9,7 @@ import Page.PollAnswers
 
 type Page
     = Blank
-    | Home Page.Home.Model
+    | Start Page.Start.Model
     | User Page.User.Model
     | PollNew Page.PollNew.Model
     | PollVote Page.PollVote.Model

@@ -9,7 +9,7 @@ import Task
 import Html exposing (..)
 import Views
 import Page exposing (Page(..), PageState(..))
-import Page.Home
+import Page.Start
 import Page.User
 import Page.PollNew
 import Page.PollVote
@@ -81,15 +81,15 @@ update msg model =
                         , Cmd.none
                         )
 
-        HomeMsg subMsg ->
+        StartMsg subMsg ->
             case Page.getPage model.pageState of
-                Page.Home subModel ->
+                Page.Start subModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.Home.update subMsg model.appState subModel
+                            Page.Start.update subMsg model.appState subModel
                     in
-                        ( { model | pageState = Loaded (Page.Home newModel) }
-                        , Cmd.map HomeMsg newCmd
+                        ( { model | pageState = Loaded (Page.Start newModel) }
+                        , Cmd.map StartMsg newCmd
                         )
 
                 _ ->
@@ -157,8 +157,8 @@ updateWithRoute route model =
             )
     in
         case route of
-            Route.Home ->
-                ( { model | pageState = Loaded (Page.Home Page.Home.init) }
+            Route.Start ->
+                ( { model | pageState = Loaded (Page.Start Page.Start.init) }
                 , Cmd.none
                 )
 
@@ -197,8 +197,8 @@ view model =
             Html.text error
                 |> Views.frame model.appState
 
-        Loaded (Page.Home homeModel) ->
-            Page.Home.view homeModel model.appState HomeMsg Mdl
+        Loaded (Page.Start startModel) ->
+            Page.Start.view startModel model.appState StartMsg Mdl
                 |> Views.frame model.appState
 
         Loaded (Page.PollNew newPollModel) ->

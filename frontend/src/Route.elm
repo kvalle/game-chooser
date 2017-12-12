@@ -14,7 +14,7 @@ import UrlParser as Url exposing ((</>), Parser, top, oneOf, parseHash, s, strin
 
 
 type Route
-    = Home
+    = Start
     | User String
     | PollNew String
     | PollVote String
@@ -25,7 +25,7 @@ type Route
 route : Parser (Route -> a) a
 route =
     oneOf
-        [ Url.map Home top
+        [ Url.map Start top
         , Url.map User (s "user" </> string)
         , Url.map PollNew (s "poll" </> string </> s "new")
         , Url.map PollAnswers (s "poll" </> string </> s "answers")
@@ -42,7 +42,7 @@ routeToString page =
     let
         pieces =
             case page of
-                Home ->
+                Start ->
                     []
 
                 User username ->
@@ -84,6 +84,6 @@ fromLocation location =
             Debug.log "Location changed: " location
     in
         if String.isEmpty location.hash then
-            Home
+            Start
         else
             parseHash route location |> Maybe.withDefault Unknown
