@@ -24,12 +24,12 @@ type Msg
 
 
 type alias Model =
-    { username : String }
+    String
 
 
 init : Model
 init =
-    { username = "" }
+    ""
 
 
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
@@ -41,7 +41,7 @@ view model appState homeMsg mdlMsg =
             [ Textfield.label "Board Game Geek username?"
             , Textfield.floatingLabel
             , Textfield.text_
-            , Textfield.value model.username
+            , Textfield.value model
             , Options.onInput (homeMsg << Edit)
             , Options.on "keydown" (KeyCode.decoderFor KeyCode.enter <| homeMsg Submit)
             ]
@@ -52,7 +52,7 @@ view model appState homeMsg mdlMsg =
             [ Button.raised
             , Button.ripple
             , Options.onClick (homeMsg Submit)
-            , Button.disabled |> Options.when (model.username == "")
+            , Button.disabled |> Options.when (model == "")
             ]
             [ text "Submit" ]
         ]
@@ -62,7 +62,7 @@ update : Msg -> AppState -> Model -> ( Model, Cmd Msg )
 update msg appState model =
     case msg of
         Edit newName ->
-            ( { model | username = newName }, Cmd.none )
+            ( newName, Cmd.none )
 
         Submit ->
-            ( model, Route.newUrl (User model.username) )
+            ( model, Route.newUrl (User model) )
