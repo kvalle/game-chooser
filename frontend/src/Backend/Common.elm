@@ -29,7 +29,7 @@ buildUrl : Environment -> List String -> Result String String
 buildUrl env fragments =
     case env of
         Localhost ->
-            Ok <| "http://localhost:7777/" ++ (String.join "/" fragments)
+            Ok <| "https://test.api.game.kjetilvalle.com/" ++ (String.join "/" fragments)
 
         Test ->
             Ok <| "https://test.api.game.kjetilvalle.com/" ++ (String.join "/" fragments)
