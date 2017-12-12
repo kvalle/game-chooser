@@ -54,6 +54,17 @@ html, body {
   filter: grayscale(1.0) opacity(0.9) blur(2px);
 }
 
+.game-card-info-link {
+  float: right;
+  width: 20%;
+  color: #444;
+}
+
+.game-card-select-box {
+  float: left;
+  width: 80%;
+}
+
 
 .user-wrapper {
 

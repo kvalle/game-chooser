@@ -9,6 +9,8 @@ import Material.Typography as Typography
 import Material.Color as Color
 import Material.Elevation as Elevation
 import Material.Toggles as Toggles
+import Material.Icon as Icon
+import Material.Tooltip as Tooltip
 import Material
 
 
@@ -64,7 +66,15 @@ card setSelection mdlMsg mdlModel index game =
                 [ Options.onClick <| setSelection game.id (not game.selected)
                 , Toggles.ripple
                 , Toggles.value game.selected
+                , Options.cs "game-card-select-box"
                 ]
                 [ text "Selected" ]
+            , a
+                [ href <| "https://boardgamegeek.com/boardgame/" ++ game.id
+                , target "_blank"
+                ]
+                [ Icon.view "info_outline"
+                    [ Options.cs "game-card-info-link" ]
+                ]
             ]
         ]
