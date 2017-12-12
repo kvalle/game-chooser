@@ -1,6 +1,5 @@
-module Main exposing (..)
+module Main exposing (main)
 
-import Html
 import Messages exposing (Msg(..))
 import Material
 import Navigation
@@ -186,7 +185,7 @@ updateWithRoute route model =
 view : Model -> Html Msg
 view model =
     case model.pageState of
-        TransitioningFrom page ->
+        TransitioningFrom _ ->
             Views.loading
                 |> Views.frame model.appState
 

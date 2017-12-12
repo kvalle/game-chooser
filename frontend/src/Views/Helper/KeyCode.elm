@@ -12,7 +12,6 @@ module Views.Helper.KeyCode
         )
 
 import Json.Decode
-import Json.Decode
 
 
 type alias KeyCode =

@@ -6,7 +6,6 @@ import Page.User
 import Page.Home
 import Page.PollNew
 import Page.PollVote
-import Page.PollAnswers
 import Http
 import Page
 

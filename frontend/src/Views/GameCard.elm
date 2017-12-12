@@ -10,7 +10,6 @@ import Material.Color as Color
 import Material.Elevation as Elevation
 import Material.Toggles as Toggles
 import Material.Icon as Icon
-import Material.Tooltip as Tooltip
 import Material
 
 

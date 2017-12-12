@@ -28,7 +28,7 @@ encode user =
 
 decoder : Json.Decode.Decoder User
 decoder =
-    Json.Decode.map4 (User)
+    Json.Decode.map4 User
         (Json.Decode.field "id" Json.Decode.string)
         (Json.Decode.field "username" Json.Decode.string)
         (Json.Decode.field "firstname" Json.Decode.string)

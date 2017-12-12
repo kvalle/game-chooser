@@ -8,7 +8,7 @@ module Backend.Common
         , get
         )
 
-import Http exposing (Request, Error)
+import Http exposing (Error)
 import Data.Environment exposing (Environment(..))
 import Task exposing (Task)
 import Time exposing (Time)
@@ -29,15 +29,15 @@ buildUrl : Environment -> List String -> Result String String
 buildUrl env fragments =
     case env of
         Localhost ->
-            Ok <| "https://test.api.game.kjetilvalle.com/" ++ (String.join "/" fragments)
+            Ok <| "https://test.api.game.kjetilvalle.com/" ++ String.join "/" fragments
 
         Test ->
-            Ok <| "https://test.api.game.kjetilvalle.com/" ++ (String.join "/" fragments)
+            Ok <| "https://test.api.game.kjetilvalle.com/" ++ String.join "/" fragments
 
         Prod ->
-            Ok <| "https://api.game.kjetilvalle.com/" ++ (String.join "/" fragments)
+            Ok <| "https://api.game.kjetilvalle.com/" ++ String.join "/" fragments
 
-        Unknown err ->
+        Unknown _ ->
             Err ""
 
 

@@ -62,27 +62,27 @@ setPoll poll model =
 getPoll : Model -> Poll
 getPoll model =
     case model of
-        AskName poll name ->
+        AskName poll _ ->
             poll
 
-        AskGames poll name voteState ->
+        AskGames poll _ _ ->
             poll
 
 
 getName : Model -> Name
 getName model =
     case model of
-        AskName poll name ->
+        AskName _ name ->
             name
 
-        AskGames poll name voteState ->
+        AskGames _ name _ ->
             name
 
 
 setVoteState : VoteState -> Model -> Model
 setVoteState voteState model =
     case model of
-        AskName poll name ->
+        AskName _ _ ->
             -- no change
             model
 
@@ -129,11 +129,11 @@ update msg appState model =
                         |> List.map .id
             in
                 case model of
-                    AskName poll name ->
+                    AskName _ _ ->
                         -- Not supposed to save votes in this state
                         ( model, Cmd.none )
 
-                    AskGames poll name voteState ->
+                    AskGames poll name _ ->
                         ( AskGames poll name Saving
                         , Backend.Poll.vote appState.environment poll.id name selectedGameIds
                             |> Task.attempt VotesSubmitted
@@ -141,7 +141,7 @@ update msg appState model =
 
         VotesSubmitted result ->
             case result of
-                Err err ->
+                Err _ ->
                     ( model |> setVoteState Failed
                     , Cmd.none
                     )
@@ -155,10 +155,10 @@ update msg appState model =
 view : Model -> AppState -> (Msg -> msg) -> (Material.Msg msg -> msg) -> Html msg
 view model appState msgWrapper mdlMsg =
     case model of
-        AskName poll name ->
+        AskName _ name ->
             viewNameForm name appState msgWrapper mdlMsg
 
-        AskGames poll name voteState ->
+        AskGames poll _ voteState ->
             viewGames poll voteState appState msgWrapper mdlMsg
 
 

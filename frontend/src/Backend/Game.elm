@@ -2,7 +2,7 @@ module Backend.Game exposing (getByName)
 
 import Data.Game exposing (Game)
 import Task exposing (Task)
-import Http exposing (Request)
+import Http
 import Json.Decode
 import Data.Environment exposing (Environment(..))
 import Backend.Common exposing (buildUrl, get)

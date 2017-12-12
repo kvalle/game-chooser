@@ -173,5 +173,5 @@ update msg appState model =
                     , Route.newUrl (PollNew pollId)
                     )
 
-                Err error ->
+                Err _ ->
                     ( { model | state = Failed }, Cmd.none )

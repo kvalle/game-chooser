@@ -9,7 +9,7 @@ module Page.PollAnswers
 
 import Html exposing (..)
 import Data.Poll exposing (Poll, PollId)
-import Data.Game exposing (Game, GameId)
+import Data.Game exposing (Game)
 import Material
 import Material.List as Lists
 import Data.AppState exposing (AppState)

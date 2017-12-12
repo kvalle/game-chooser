@@ -2,7 +2,7 @@ module Backend.User exposing (getByName)
 
 import Data.User exposing (User)
 import Task exposing (Task)
-import Http exposing (Request)
+import Http
 import Data.Environment exposing (Environment(..))
 import Backend.Common exposing (buildUrl, get)
 

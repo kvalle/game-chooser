@@ -16,20 +16,20 @@ updateById id updateFn =
         )
 
 
-{-|
-  Compose a two parameter function with a single parameter function
+{-| Compose a two parameter function with a single parameter function
 
-  (foo >>> bar) a b == bar (foo a b)
+(foo >>> bar) a b == bar (foo a b)
+
 -}
 (>>>) : (a -> b -> c) -> (c -> d) -> a -> b -> d
 (>>>) foo bar x y =
     foo x y |> bar
 
 
-{-|
-  Compose a two parameter function with a single parameter function
+{-| Compose a two parameter function with a single parameter function
 
-  (foo <<< bar) a b == foo (bar a b)
+(foo <<< bar) a b == foo (bar a b)
+
 -}
 (<<<) : (c -> d) -> (a -> b -> c) -> a -> b -> d
 (<<<) =

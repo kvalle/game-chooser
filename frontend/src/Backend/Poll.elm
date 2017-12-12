@@ -3,7 +3,7 @@ module Backend.Poll exposing (create, getById, vote)
 import Data.Poll exposing (Poll, PollId)
 import Data.Game exposing (GameId)
 import Task exposing (Task)
-import Http exposing (Request, Error(..))
+import Http exposing (Error(..))
 import Json.Decode
 import Json.Encode
 import Data.Environment exposing (Environment(..))
