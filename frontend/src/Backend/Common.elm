@@ -31,6 +31,12 @@ buildUrl env fragments =
         Localhost ->
             Ok <| "http://localhost:7777/" ++ (String.join "/" fragments)
 
+        Test ->
+            Ok <| "https://test.api.game.kjetilvalle.com/" ++ (String.join "/" fragments)
+
+        Prod ->
+            Ok <| "https://api.game.kjetilvalle.com/" ++ (String.join "/" fragments)
+
         Unknown err ->
             Err ""
 
