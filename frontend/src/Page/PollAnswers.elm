@@ -57,15 +57,18 @@ view model appState mdlMsg =
     let
         games =
             selector model.poll
+
+        numberOfParticipants =
+            Dict.size model.poll.votes
     in
         div []
             [ h3 [] [ text <| "Poll results" ]
-            , Lists.ul [] <| List.map gameElement games
+            , Lists.ul [] <| List.map (gameElement numberOfParticipants) games
             ]
 
 
-gameElement : ( Game, List Name ) -> Html msg
-gameElement ( game, voters ) =
+gameElement : Int -> ( Game, List Name ) -> Html msg
+gameElement numberOfParticipants ( game, voters ) =
     let
         votes =
             List.length voters |> toString
@@ -74,7 +77,12 @@ gameElement ( game, voters ) =
             [ Lists.content []
                 [ Lists.avatarImage game.thumbnail_url []
                 , text game.title
-                , Lists.subtitle [] [ text <| votes ++ " of 5 people voted this" ]
+                , Lists.subtitle []
+                    [ text votes
+                    , text " of "
+                    , text <| toString numberOfParticipants
+                    , text " people voted this"
+                    ]
                 ]
             ]
 
