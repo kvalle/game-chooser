@@ -7,11 +7,11 @@ import collection
 def handler(event, context):
     username = event['username']
 
-    user = bgg.get_user(username)
-    user["created"] = datetime.utcnow().isoformat()
-    user["updated"] = datetime.utcnow().isoformat()
-    user["state"] = collection.STATE_WAITING
+    collection = bgg.get_user(username)
+    collection["created"] = datetime.utcnow().isoformat()
+    collection["updated"] = datetime.utcnow().isoformat()
+    collection["state"] = collection.STATE_WAITING
 
-    database.store_user(user)
+    database.store_collection(collection)
 
-    return user
+    return collection
