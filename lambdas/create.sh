@@ -14,8 +14,8 @@ envchain aws-privat aws lambda create-function \
   --function-name arn:aws:lambda:eu-central-1:017978203355:function:game-chooser--${lambda_name} \
   --zip-file fileb://build/package.zip \
   --role arn:aws:iam::017978203355:role/game-chooser--lambda-user \
-  --handler lambda.handler \
-  --runtime python3.6 \
+  --handler main.handler \
+  --runtime python2.7 \
   --timeout 20 \
   --memory-size 512
 
