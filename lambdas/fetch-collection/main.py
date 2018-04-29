@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 import bgg
 import database
@@ -19,4 +20,7 @@ def handler(event, context):
 
     database.store_collection(collection)
 
-    return collection
+    return {
+        "statusCode": 201,
+        "body": json.dumps(collection)
+    }
