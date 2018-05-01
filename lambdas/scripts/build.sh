@@ -36,6 +36,10 @@ done
 BASEDIR="${SCRIPT_DIR}/.."
 cd ${BASEDIR}
 
+if [ -z ${VIRTUAL_ENV} ]; then
+  source game-chooser-venv/bin/activate
+fi
+
 function build() {
   # Make sure build dir is present and empty
   mkdir -p build
@@ -48,6 +52,8 @@ function build() {
   # Add lambda code to the bundle
   cd $BASEDIR/fetch-collection
   zip $BASEDIR/build/package.zip *
+
+  echo "[Done]"
 }
 
 function watch_build() {
