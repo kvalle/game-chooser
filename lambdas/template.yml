@@ -25,3 +25,7 @@ Resources:
       Handler: main.ping
       Runtime: python2.7
       CodeUri: build/package.zip
+
+CollectionsTable:
+  Type: AWS::Serverless::SimpleTable
+  TableName: game-chooser--collections
