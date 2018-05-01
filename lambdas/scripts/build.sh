@@ -50,7 +50,7 @@ function build() {
   zip -r $BASEDIR/build/package.zip *
 
   # Add lambda code to the bundle
-  cd $BASEDIR/fetch-collection
+  cd $BASEDIR/functions
   zip $BASEDIR/build/package.zip *
 
   echo "[Done]"
@@ -59,13 +59,13 @@ function build() {
 function watch_build() {
   if command -v inotifywait >/dev/null; then
     echo -e "\033[1;37m> Prepared to run tests on new changes..\033[0m"
-    while inotifywait -q -r -e modify $BASEDIR/fetch-collection ; do
+    while inotifywait -q -r -e modify $BASEDIR/functions ; do
       build
     done
 
   elif command -v fswatch >/dev/null; then
     echo -e "\033[1;37m> Prepared to run tests on new changes..\033[0m"
-    fswatch $BASEDIR/fetch-collection | (while read; do build; done)
+    fswatch $BASEDIR/functions | (while read; do build; done)
   else
     echo "Unable to run watch. Make sure you have inotifytools (linux) or fswatch (mac) installed."
   fi

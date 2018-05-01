@@ -7,26 +7,10 @@ while [ -h "$BASEDIR/$0" ]; do
     SYM=$(readlink $BASEDIR/$0)
     BASEDIR=$(cd $DIR && cd $(dirname -- "$SYM") && pwd)
 done
-
-echo "Performing preliminary checks"
-lambda_name="$1"
-if [ -z ${lambda_name} ]; then
-  echo "Please specify lambda function (folder) to deploy."
-  exit 1
-fi
-if [ -z ${VIRTUAL_ENV} ]; then
-  source game-chooser-venv/bin/activate
-fi
+cd $BASEDIR
 
 echo "Packaging code bundle"
-cd "$BASEDIR"
-rm -rf build/*
-mkdir -p build
-cd ${lambda_name}
-zip $BASEDIR/build/package.zip *
-cd ${VIRTUAL_ENV}/lib/python2.7/site-packages/
-zip -r $BASEDIR/build/package.zip *
-cd $BASEDIR
+./build.sh
 
 echo "Deploying lambda"
 envchain aws-privat aws lambda update-function-code \

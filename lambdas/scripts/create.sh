@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-lambda_name="$1"
+BASEDIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+while [ -h "$BASEDIR/$0" ]; do
+    DIR=$(dirname -- "$BASEDIR/$0")
+    SYM=$(readlink $BASEDIR/$0)
+    BASEDIR=$(cd $DIR && cd $(dirname -- "$SYM") && pwd)
+done
+cd $BASEDIR
 
 echo "Packaging code bundle"
-cd ${lambda_name}
-zip ../build/package.zip *
-cd ..
+./build.sh
 
 echo "Creating lambda"
 envchain aws-privat aws lambda create-function \
