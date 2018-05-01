@@ -4,6 +4,7 @@ dynamodb = boto3.resource('dynamodb')
 
 def store_collection(collection):
     table = dynamodb.Table('game-chooser--collections')
+
     table.put_item(
        Item={
             'username': collection['username'],

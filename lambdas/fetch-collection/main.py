@@ -24,3 +24,10 @@ def handler(event, context):
         "statusCode": 201,
         "body": json.dumps(collection)
     }
+
+
+def ping(event, context):
+    return {
+        "statusCode": 200,
+        "body": "pong"
+    }

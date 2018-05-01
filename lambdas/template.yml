@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Get BGG game collection
+
+
+Resources:
+  FetchCollection:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main.handler
+      Runtime: python2.7
+      CodeUri: build/package.zip
+      Policies:
+        # Give DynamoDB Full Access to your Lambda Function
+        - AmazonDynamoDBFullAccess
+      Events:
+        FetchCollectionEndpoint:
+          Type: Api
+          Properties:
+            Path: /collection
+            Method: get
+  PingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main.ping
+      Runtime: python2.7
+      CodeUri: build/package.zip
