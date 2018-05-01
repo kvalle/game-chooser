@@ -14,6 +14,9 @@ if [ -z ${lambda_name} ]; then
   echo "Please specify lambda function (folder) to deploy."
   exit 1
 fi
+if [ -z ${VIRTUAL_ENV} ]; then
+  source game-chooser-venv/bin/activate
+fi
 
 echo "Packaging code bundle"
 cd "$BASEDIR"
