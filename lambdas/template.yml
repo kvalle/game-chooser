@@ -36,3 +36,9 @@ Resources:
       Runtime: python2.7
       CodeUri: build/package.zip
       Role: arn:aws:iam::017978203355:role/game-chooser--lambda-user
+      Events:
+        FetchCollectionEndpoint:
+          Type: Api
+          Properties:
+            Path: /ping
+            Method: get
