@@ -6,7 +6,7 @@ Resources:
   FetchCollection:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: main.handler
+      Handler: main.fetch_collection
       Runtime: python2.7
       CodeUri: build/package.zip
       Role: arn:aws:iam::017978203355:role/game-chooser--lambda-user
@@ -16,6 +16,7 @@ Resources:
           Properties:
             Path: /collection
             Method: get
+
   PingFunction:
     Type: AWS::Serverless::Function
     Properties:

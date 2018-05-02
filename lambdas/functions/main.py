@@ -10,7 +10,7 @@ STATE_WAITING = "WAITING"  # request for games given enough time, needs checking
 STATE_LOADED = "LOADED"    # game list loaded successfully
 STATE_FAILED = "FAILED"    # failed to load game list
 
-def handler(event, context):
+def fetch_collection(event, context):
     username = event['username']
 
     collection = bgg.get_user(username)
