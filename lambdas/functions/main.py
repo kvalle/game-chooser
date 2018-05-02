@@ -11,7 +11,7 @@ STATE_LOADED = "LOADED"    # game list loaded successfully
 STATE_FAILED = "FAILED"    # failed to load game list
 
 def fetch_collection(event, context):
-    username = event['username']
+    username = event["pathParameters"]["username"]
 
     collection = bgg.get_user(username)
     collection["created"] = datetime.utcnow().isoformat()
