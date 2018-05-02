@@ -4,16 +4,36 @@ Description: Get BGG game collection
 
 Resources:
 
-  CollectionsTable:
-    Type: AWS::Serverless::SimpleTable
+  UsersTable:
+    Type: "AWS::DynamoDB::Table"
     Properties:
-      TableName: game-chooser--collections
-      PrimaryKey:
-        Name: username
-        Type: String
+      AttributeDefinitions:
+        - AttributeName: "username"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "username"
+          KeyType: "HASH"
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: "game-chooser--collections"
+      StreamSpecification:
+        StreamViewType: "NEW_IMAGE"
+
+  CollectionWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main.collection_worker
+      Runtime: python2.7
+      CodeUri: build/package.zip
+      Role: arn:aws:iam::017978203355:role/game-chooser--lambda-user
+      Events:
+        CollectionsTableWritten:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt UsersTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 10
 
   FetchCollection:
     Type: AWS::Serverless::Function

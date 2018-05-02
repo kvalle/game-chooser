@@ -1,0 +1,65 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DeleteItem",
+                "dynamodb:RestoreTableToPointInTime",
+                "dynamodb:CreateBackup",
+                "dynamodb:UpdateGlobalTable",
+                "dynamodb:DeleteTable",
+                "dynamodb:UpdateContinuousBackups",
+                "dynamodb:DescribeTable",
+                "dynamodb:GetItem",
+                "dynamodb:DescribeContinuousBackups",
+                "dynamodb:CreateGlobalTable",
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:UpdateTimeToLive",
+                "dynamodb:PutItem",
+                "dynamodb:Scan",
+                "dynamodb:DescribeStream",
+                "dynamodb:Query",
+                "dynamodb:UpdateItem",
+                "dynamodb:CreateTable",
+                "dynamodb:DescribeGlobalTable",
+                "dynamodb:GetShardIterator",
+                "dynamodb:RestoreTableFromBackup",
+                "dynamodb:DeleteBackup",
+                "dynamodb:DescribeBackup",
+                "dynamodb:UpdateTable",
+                "dynamodb:GetRecords"
+            ],
+            "Resource": "arn:aws:dynamodb:eu-central-1:017978203355:table/game-chooser--collections"
+        },
+        {
+          "Action": [
+            "dynamodb:DescribeStream",
+            "dynamodb:GetRecords",
+            "dynamodb:GetShardIterator",
+            "dynamodb:ListStreams"
+          ],
+          "Effect": "Allow",
+          "Resource": "arn:aws:dynamodb:eu-central-1:017978203355:table/game-chooser--collections/stream/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DescribeReservedCapacityOfferings",
+                "dynamodb:ListGlobalTables",
+                "dynamodb:TagResource",
+                "dynamodb:UntagResource",
+                "dynamodb:ListTables",
+                "dynamodb:DescribeReservedCapacity",
+                "dynamodb:ListBackups",
+                "dynamodb:PurchaseReservedCapacityOfferings",
+                "dynamodb:ListTagsOfResource",
+                "dynamodb:DescribeTimeToLive",
+                "dynamodb:DescribeLimits",
+                "dynamodb:ListStreams"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

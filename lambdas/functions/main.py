@@ -25,6 +25,11 @@ def fetch_collection(event, context):
         "body": json.dumps(collection)
     }
 
+def collection_worker(event, context):
+    return {
+        "statusCode": 200,
+        "body": "ok"
+    }
 
 def ping(event, context):
     return {
