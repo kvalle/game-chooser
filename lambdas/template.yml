@@ -2,7 +2,6 @@ AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Get BGG game collection
 
-
 Resources:
   FetchCollection:
     Type: AWS::Serverless::Function
@@ -10,9 +9,7 @@ Resources:
       Handler: main.handler
       Runtime: python2.7
       CodeUri: build/package.zip
-      Policies:
-        # Give DynamoDB Full Access to your Lambda Function
-        - AmazonDynamoDBFullAccess
+      Role: arn:aws:iam::017978203355:role/game-chooser--lambda-user
       Events:
         FetchCollectionEndpoint:
           Type: Api
@@ -25,7 +22,4 @@ Resources:
       Handler: main.ping
       Runtime: python2.7
       CodeUri: build/package.zip
-
-CollectionsTable:
-  Type: AWS::Serverless::SimpleTable
-  TableName: game-chooser--collections
+      Role: arn:aws:iam::017978203355:role/game-chooser--lambda-user
