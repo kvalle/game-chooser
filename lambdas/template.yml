@@ -3,6 +3,18 @@ Transform: AWS::Serverless-2016-10-31
 Description: Get BGG game collection
 
 Resources:
+
+  CollectionsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: game-chooser--collections
+      PrimaryKey:
+        Name: username
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
   FetchCollection:
     Type: AWS::Serverless::Function
     Properties:
