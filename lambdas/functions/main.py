@@ -39,7 +39,7 @@ def collection_worker(event, context):
         database.store_collection(collection)
         result["updated"] += 1
 
-    return result
+    print result
 
 def ping(event, context):
     return {
