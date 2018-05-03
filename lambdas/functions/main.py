@@ -30,25 +30,36 @@ def collection_worker(event, context):
     rows = filter(lambda r: r["state"]["S"] == STATE_WAITING, rows)
 
     result = {
-        "completed": 0,
-        "still_waiting": 0,
-        "failed": 0
+        "completed": [],
+        "still_waiting": [],
+        "failed": []
     }
 
     for row in rows:
         collection = database.collection_from_dynamo_event(row)
+        username = collection["username"]
 
-        games_response = bgg.get_games(collection["username"])
-        if games_response["status"] == 200:
-            collection["state"] = STATE_LOADED
-            collection["games"] = games_response["games"]
-            result["completed"] += 1
-        elif games_response["status"] == 202:
-            collection["state"] = STATE_IDLE
-            result["still_waiting"] += 1
-        else:
+        try:
+            games_response = bgg.get_games(username)
+            if games_response["status"] == 200:
+                collection["state"] = STATE_LOADED
+                collection["games"] = games_response["games"]
+                result["completed"].append({"username": username})
+            elif games_response["status"] == 202:
+                collection["state"] = STATE_IDLE
+                result["still_waiting"].append({"username": username})
+            else:
+                collection["state"] = STATE_FAILED
+                result["failed"].append({
+                    "user": username,
+                    "reason": games_response["error"]
+                })
+        except Exception as e:
             collection["state"] = STATE_FAILED
-            result["failed"] += 1
+            result["failed"].append({
+                "user": username,
+                "reason": "Python error: " + str(e)
+            })
 
         database.store_collection(collection)
 
