@@ -26,10 +26,20 @@ def fetch_collection(event, context):
     }
 
 def collection_worker(event, context):
-    return {
-        "statusCode": 200,
-        "body": "ok"
+    rows = [r["dynamodb"]["NewImage"] for r in event["Records"]]
+    rows = filter(lambda r: r["state"]["S"] == STATE_WAITING, rows)
+
+    result = {
+        "updated": 0
     }
+
+    for row in rows:
+        collection = database.collection_from_dynamo_event(row)
+        collection["state"] = STATE_IDLE
+        database.store_collection(collection)
+        result["updated"] += 1
+
+    return result
 
 def ping(event, context):
     return {

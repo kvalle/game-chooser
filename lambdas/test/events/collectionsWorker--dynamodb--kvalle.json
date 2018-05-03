@@ -1,0 +1,46 @@
+{
+  "Records": [
+    {
+      "eventID": "3a901a96df77db61dc96cf214d042b8b",
+      "eventVersion": "1.1",
+      "dynamodb": {
+        "SequenceNumber": "1601900000000005572242661",
+        "Keys": {
+          "username": {
+            "S": "kvalle"
+          }
+        },
+        "SizeBytes": 154,
+        "NewImage": {
+          "username": {
+            "S": "kvalle"
+          },
+          "updated": {
+            "S": "2018-05-03T05:14:10.978880"
+          },
+          "last_name": {
+            "S": "Valle"
+          },
+          "created": {
+            "S": "2018-05-03T05:14:10.978862"
+          },
+          "first_name": {
+            "S": "Kjetil"
+          },
+          "state": {
+            "S": "WAITING"
+          },
+          "bgg_user_id": {
+            "S": "1068619"
+          }
+        },
+        "ApproximateCreationDateTime": 1525324440,
+        "StreamViewType": "NEW_IMAGE"
+      },
+      "awsRegion": "eu-central-1",
+      "eventName": "MODIFY",
+      "eventSourceARN": "arn:aws:dynamodb:eu-central-1:017978203355:table/game-chooser--collections/stream/2018-05-02T20:17:36.585",
+      "eventSource": "aws:dynamodb"
+    }
+  ]
+}
