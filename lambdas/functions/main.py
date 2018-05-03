@@ -30,14 +30,27 @@ def collection_worker(event, context):
     rows = filter(lambda r: r["state"]["S"] == STATE_WAITING, rows)
 
     result = {
-        "updated": 0
+        "completed": 0,
+        "still_waiting": 0,
+        "failed": 0
     }
 
     for row in rows:
         collection = database.collection_from_dynamo_event(row)
-        collection["state"] = STATE_IDLE
+
+        games_response = bgg.get_games(collection["username"])
+        if games_response["status"] == 200:
+            collection["state"] = STATE_LOADED
+            collection["games"] = games_response["games"]
+            result["completed"] += 1
+        elif games_response["status"] == 202:
+            collection["state"] = STATE_IDLE
+            result["still_waiting"] += 1
+        else:
+            collection["state"] = STATE_FAILED
+            result["failed"] += 1
+
         database.store_collection(collection)
-        result["updated"] += 1
 
     print result
 

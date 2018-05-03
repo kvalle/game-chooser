@@ -2,31 +2,34 @@ import requests
 import xmltodict
 import time
 
-def get_games(user_name, max_retries=50):
-	url = 'https://www.boardgamegeek.com/xmlapi2/collection?username=' + user_name + '&own=1&excludesubtype=boardgameexpansion'
+def get_games(username):
+	url = 'https://www.boardgamegeek.com/xmlapi2/collection?username=' + username + '&own=1&excludesubtype=boardgameexpansion'
+	r = requests.get(url)
 
-	retries = 0
-	while retries < max_retries:
-		r = requests.get(url)
-		if r.status_code == 202:
-			retries += 1
-			time.sleep(0.2)
-		elif r.status_code != 200:
-			print "BAD RESPONSE"
-			print r.text
-			break
-		else:
-			break
+	if r.status_code == 202:
+		return {
+			"status": 202
+		}
+	elif r.status_code == 200:
+		data = xmltodict.parse(r.text)
+		games = [{
+			"id": game["@objectid"],
+			"title": game["name"]["#text"],
+			"year": game["yearpublished"] if "yearpublished" in game else None,
+			"thumbnail_url": game["thumbnail"],
+			"image_url": game["image"]
+		} for game in data["items"]["item"]]
 
-	data = xmltodict.parse(r.text)
+		return {
+			"status": 200,
+			"games": games
+		}
+	else:
+		return {
+			"status": r.status_code,
+			"error": r.text
+		}
 
-	return [{
-		"id": game["@objectid"],
-		"title": game["name"]["#text"],
-		"year": game["yearpublished"] if "yearpublished" in game else None,
-		"thumbnail_url": game["thumbnail"],
-		"image_url": game["image"]
-	} for game in data["items"]["item"]]
 
 def get_user(name):
     r = requests.get('https://www.boardgamegeek.com/xmlapi2/user?name=' + name)
