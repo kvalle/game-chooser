@@ -12,18 +12,26 @@ def get_games(username):
 		}
 	elif r.status_code == 200:
 		data = xmltodict.parse(r.text)
-		games = [{
-			"id": game["@objectid"],
-			"title": game["name"]["#text"],
-			"year": game["yearpublished"] if "yearpublished" in game else None,
-			"thumbnail_url": game["thumbnail"],
-			"image_url": game["image"]
-		} for game in data["items"]["item"]]
 
-		return {
-			"status": 200,
-			"games": games
-		}
+		if "errors" in data:
+			# Because BGG sends error messages with status code 200 :(
+			return {
+				"status": 503,
+				"error": data["errors"]["error"]["message"]
+			}
+		else:
+			games = [{
+				"id": game["@objectid"],
+				"title": game["name"]["#text"],
+				"year": game["yearpublished"] if "yearpublished" in game else None,
+				"thumbnail_url": game["thumbnail"],
+				"image_url": game["image"]
+			} for game in data["items"]["item"]]
+
+			return {
+				"status": 200,
+				"games": games
+			}
 	else:
 		return {
 			"status": r.status_code,
