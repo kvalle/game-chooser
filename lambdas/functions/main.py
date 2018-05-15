@@ -1,14 +1,9 @@
 from datetime import datetime
 import json
+import traceback
 
 import bgg
 import database
-
-# Collection states
-STATE_IDLE = "IDLE"        # request for game list run, need to wait for BGG
-STATE_WAITING = "WAITING"  # request for games given enough time, needs checking
-STATE_LOADED = "LOADED"    # game list loaded successfully
-STATE_FAILED = "FAILED"    # failed to load game list
 
 def fetch_collection(event, context):
     username = event["pathParameters"]["username"]
@@ -16,57 +11,44 @@ def fetch_collection(event, context):
     collection = bgg.get_user(username)
     collection["created"] = datetime.utcnow().isoformat()
     collection["updated"] = datetime.utcnow().isoformat()
-    collection["state"] = STATE_WAITING
 
-    database.store_collection(collection)
-
-    return {
-        "statusCode": 201,
-        "body": json.dumps(collection)
-    }
-
-def collection_worker(event, context):
-    rows = [r["dynamodb"]["NewImage"] for r in event["Records"]]
-    rows = filter(lambda r: r["state"]["S"] == STATE_WAITING, rows)
-
-    result = {
-        "completed": [],
-        "still_waiting": [],
-        "failed": []
-    }
-
-    for row in rows:
-        collection = database.collection_from_dynamo_event(row)
-        username = collection["username"]
-
+    attempts=10
+    while attempts > 0:
         try:
+            print "INFO: FETCHING %s" % username
             games_response = bgg.get_games(username)
+
             if games_response["status"] == 200:
-                collection["state"] = STATE_LOADED
                 collection["games"] = games_response["games"]
-                result["completed"].append({"username": username})
+                database.store_collection(collection)
+                return response(collection, 201)
+
             elif games_response["status"] == 202:
-                collection["state"] = STATE_IDLE
-                result["still_waiting"].append({"username": username})
+                time.sleep(0.5)
+                print "INFO: Waiting for data..."
+                attempts -= 1
+                continue
+
             else:
-                collection["state"] = STATE_FAILED
-                result["failed"].append({
-                    "user": username,
-                    "reason": games_response["error"]
-                })
+                print "ERROR: %s" % games_response["error"]
+                body = { "message": "problem fetching data from BGG" }
+                return response(body, 503)
+
         except Exception as e:
-            collection["state"] = STATE_FAILED
-            result["failed"].append({
-                "user": username,
-                "reason": "Python error: " + str(e)
-            })
+            print "ERROR:"
+            traceback.print_exc()
+            body = { "message": "encountered an error while processing request" }
+            return response(body, 500)
 
-        database.store_collection(collection)
-
-    print result
 
 def ping(event, context):
     return {
         "statusCode": 200,
         "body": "pong"
+    }
+
+def response(body, code=200):
+    return {
+        "statusCode": code,
+        "body": json.dumps(body)
     }
